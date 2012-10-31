@@ -29,13 +29,14 @@ public class GUI{
 		
 		frame = new JFrame("MP3-Tag Editor");
 		
-		frame.setVisible(true);
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.setSize(400, 300);
 		
 		setGUI();
+		
+		frame.setVisible(true);
+
 	}
 	
 	public void setGUI() {
