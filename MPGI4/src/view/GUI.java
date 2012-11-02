@@ -2,11 +2,9 @@ package view;
 
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,12 +12,13 @@ import layout.TableLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileSystemView;
 
 public class GUI{
 	
@@ -35,13 +34,15 @@ public class GUI{
 
 	// these variables are necessary for displaying the cover
 	// short guide: new ImageIcon(cover.jpg) -> new JLabel(imageIcon)
-	JLabel imageLabel;
+	ImageLabel imageLabel;
 	ImageIcon imageIcon;
 	
 	JTextField titleField;
 	JTextField interpretField;
 	JTextField albumField;
 	JTextField yearField;
+	
+	JButton save;
 	
 	// these strings represent the tags
 	// later they should be moved to MODEL
@@ -56,7 +57,7 @@ public class GUI{
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		frame.setSize(400, 300);
+		frame.setSize(600, 400);
 		
 		setGUI();
 		
@@ -65,14 +66,30 @@ public class GUI{
 	}
 	
 	public void setGUI() {
+		//Das Layout für das Hauptpanel
 		double[][] layout = {
-				{10, TableLayout.FILL, 10, TableLayout.FILL, 10, TableLayout.FILL, 10},
-				{10, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.FILL, 10}	
+				{10, TableLayout.FILL, 5, 5, TableLayout.FILL, 10, TableLayout.FILL, 10},
+				{10, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.FILL, 10, 10, TableLayout.PREFERRED, 10}	
 		};
 		mainPanel = new JPanel(new TableLayout(layout));
 		
-		frame.add(mainPanel);
+		//Das Layout für den Button
+		double[][] buttonlayout = {
+				{TableLayout.FILL, 10, TableLayout.PREFERRED},
+				{TableLayout.PREFERRED}
+		};
+		JPanel buttonPanel = new JPanel(new TableLayout(buttonlayout));
 		
+		//ein Save button
+		save = new JButton("Speichern");
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("SAVE!!");
+				
+			}
+		});
 		
 		titleLabel = new JLabel("Titel");
 		interpretLabel = new JLabel("Interpret");
@@ -82,7 +99,7 @@ public class GUI{
 		
 		// the cover - so far hardcoded
 		// TODO adjust the size of the image 
-		imageLabel = new JLabel();
+		imageLabel = new ImageLabel();
 		File file = new File("./Content/thriller-cover-michael-jackson.jpg");
 		BufferedImage originalImage = null;
 		try {
@@ -97,12 +114,16 @@ public class GUI{
 		else {
 			imageIcon = new ImageIcon(originalImage);
 			imageLabel.setIcon(imageIcon);
-
+			
+			/*
+			 * Das Bild wird nun in jedem Aufruf von paintComponent neu gezeichnet!
+			 * TODO korrekte Skalierung des Bildes!!
+			 */
 			/////////////////////////////////////////////////////////////////////////////
 			// hier wird�s kribblig... die ersten beiden int-parameter m�ssten sich an //
 			// der Gr��e von TableLayout.FILL orientieren - f�r jede Idee offen!       //
 			/////////////////////////////////////////////////////////////////////////////
-			imageIcon.setImage(imageIcon.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
+			//imageIcon.setImage(imageIcon.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
 		}
 		imageLabel.setBorder(new LineBorder(Color.BLACK));
 				
@@ -143,17 +164,28 @@ public class GUI{
 			}
 		});
 		
-		mainPanel.add(titleLabel, "3,1");
-		mainPanel.add(interpretLabel, "3,4");
-		mainPanel.add(albumLabel, "5,4");
-		mainPanel.add(yearLabel, "5,7");
-		mainPanel.add(coverLabel, "3,7");
+		//Seperatoren-> weglassen oder findet ihr das ok?
+		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "2,1, 2,12");
+		mainPanel.add(new JSeparator(JSeparator.HORIZONTAL), "4,11, 6,11");
 		
-		mainPanel.add(imageLabel, "3,8,3,9");
-		mainPanel.add(titleField, "3,2,5,1");
-		mainPanel.add(interpretField, "3,5");
-		mainPanel.add(albumField, "5,5");
-		mainPanel.add(yearField, "5,8");
+		//das button panel
+		buttonPanel.add(save, "2,0");
+		mainPanel.add(buttonPanel, "6,12");
+		
+		mainPanel.add(titleLabel, "4,1");
+		mainPanel.add(interpretLabel, "4,4");
+		mainPanel.add(albumLabel, "6,4");
+		mainPanel.add(yearLabel, "6,7");
+		mainPanel.add(coverLabel, "4,7");
+		
+		mainPanel.add(imageLabel, "4,8,4,9");
+		
+		mainPanel.add(titleField, "4,2,6,1");
+		mainPanel.add(interpretField, "4,5");
+		mainPanel.add(albumField, "6,5, 6,5");
+		mainPanel.add(yearField, "6,8, 6,8");
+		
+		frame.add(mainPanel);
 	}
 	
 	
