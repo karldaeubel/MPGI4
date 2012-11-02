@@ -1,3 +1,6 @@
+package view;
+
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
