@@ -7,7 +7,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 
-import info.clearthought.layout.TableLayout;
+import layout.TableLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -96,8 +96,8 @@ public class GUI{
 			imageLabel.setIcon(imageIcon);
 
 			/////////////////////////////////////////////////////////////////////////////
-			// hier wird´s kribblig... die ersten beiden int-parameter müssten sich an //
-			// der Größe von TableLayout.FILL orientieren - für jede Idee offen!       //
+			// hier wirdï¿½s kribblig... die ersten beiden int-parameter mï¿½ssten sich an //
+			// der Grï¿½ï¿½e von TableLayout.FILL orientieren - fï¿½r jede Idee offen!       //
 			/////////////////////////////////////////////////////////////////////////////
 			imageIcon.setImage(imageIcon.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
 		}
