@@ -14,7 +14,9 @@ public class ImageLabel extends JLabel{
 	}
 	
 	public void setIcon(ImageIcon icon) {
+		super.setIcon(icon);
 		imageIcon = icon;
+		super.setIcon(null);
 	}
 
 	@Override
