@@ -7,22 +7,27 @@ import javax.swing.JLabel;
 
 public class ImageLabel extends JLabel{
 	
+	ImageIcon imageIcon;
 	public ImageLabel() {
 		super();
+		imageIcon = new ImageIcon();
+	}
+	
+	public void setIcon(ImageIcon icon) {
+		imageIcon = icon;
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		ImageIcon temp = (ImageIcon) getIcon();
-		if(temp != null) {
+		if(imageIcon != null) {
 			
-			g.drawImage(temp.getImage(), 
+			g.drawImage(imageIcon.getImage(), 
 					0, 0, 
 					getWidth(), getHeight(),
 					0, 0,
-					temp.getIconWidth(), temp.getIconHeight(),
+					imageIcon.getIconWidth(), imageIcon.getIconHeight(),
 					null);
 		}
 	}
