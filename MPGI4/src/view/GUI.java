@@ -4,6 +4,8 @@ package view;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import layout.TableLayout;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class GUI{
+	
+	static File choosenFile =null;
 	
 	JFrame frame;
 	
@@ -126,6 +131,34 @@ public class GUI{
 			//imageIcon.setImage(imageIcon.getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
 		}
 		imageLabel.setBorder(new LineBorder(Color.BLACK));
+		
+		
+		// Event for choosing a new cover or deleting the existing one
+		imageLabel.addMouseListener(new MouseAdapter(){
+			public void mouseClicked (MouseEvent e){
+				
+				switch (e.getButton()) {
+				case MouseEvent.BUTTON1:
+					JFileChooser chooser= new JFileChooser();
+					int returnVA1 = chooser.showOpenDialog(imageLabel);
+					choosenFile =chooser.getSelectedFile();
+					BufferedImage image = null;
+					try {
+						image = ImageIO.read(choosenFile);
+					} catch (IOException ex) {
+					}
+					imageLabel.setIcon(new ImageIcon(image));
+					break;			
+					//if right mouse button is pressed, delete existing Icon 
+				case MouseEvent.BUTTON3:
+					ImageIcon imageI = new ImageIcon();
+					imageLabel.setIcon(imageI);
+				default:
+					break;
+				}
+			}
+			
+		});
 				
 		// the following actionListeners only react on "ENTER"
 		titleField = new JTextField(20);
