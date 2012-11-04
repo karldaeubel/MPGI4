@@ -26,10 +26,6 @@ import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-
-import resources.TestImages;
 
 //import exceptions.YearOutOfTimePeriodException;
 
@@ -112,7 +108,22 @@ public class GUI {
 					currNode.mp3.setAlbum(albumField.getText());
 					currNode.mp3.setYear(yearField.getText());
 				}
-
+				
+				/*
+				try {
+					int year = Integer.parseInt(yearString);
+					if (year <= 1905 || year > 2012)
+						throw new YearOutOfTimePeriodException();
+				}
+				// if year is not a number
+				catch (NumberFormatException formatException) {
+				System.out.println("Wrong fromat!");
+				}
+				// if year is not between 1905 and 2012
+				catch (YearOutOfTimePeriodException yearException) {
+					System.out.println("Year is not valid ");
+				}
+				*/
 				// for debug only
 				System.out.println("" + titleString + ", " + interpretString
 						+ ", " + albumString + ", " + yearString);
@@ -125,7 +136,6 @@ public class GUI {
 		yearLabel = new JLabel("Jahr");
 		coverLabel = new JLabel("Cover");
 
-		// the cover - so far hardcoded
 		imageLabel = new ImageLabel();
 		// Event for choosing a new cover or deleting the existing one
 		imageLabel.addMouseListener(new MouseAdapter() {
