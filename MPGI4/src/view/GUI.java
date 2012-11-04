@@ -19,14 +19,23 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.border.Border;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
-import exceptions.YearOutOfTimePeriodException;
+import resources.TestImages;
+
+//import exceptions.YearOutOfTimePeriodException;
+
 
 public class GUI {
-
+	
 	static File choosenFile = null;
 
 	JFrame frame;
@@ -57,6 +66,10 @@ public class GUI {
 	String interpretString = "";
 	String albumString = "";
 	String yearString = "";
+	
+	JTree tree;
+	
+	MP3Node currNode;
 
 	public GUI() {
 
@@ -65,10 +78,6 @@ public class GUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setSize(600, 400);
-
-		setGUI();
-
-		frame.setVisible(true);
 
 	}
 
@@ -96,24 +105,12 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("SAVE!!");
-
-				titleString = titleField.getText();
-				interpretString = interpretField.getText();
-				albumString = albumField.getText();
-				yearString = yearField.getText();
-
-				try {
-					int year = Integer.parseInt(yearString);
-					if (year <= 1905 || year > 2012)
-						throw new YearOutOfTimePeriodException();
-				} 
-				// if year is not a number
-				catch (NumberFormatException formatException) {
-					System.out.println("Wrong fromat!");
-				} 
-				// if year is not between 1905 and 2012
-				catch (YearOutOfTimePeriodException yearException) {
-					System.out.println("Year is not valid ");
+				//TODO Bilder hinzufügen! und bei änderung in currNode ändern
+				if(currNode != null) {
+					currNode.mp3.setTitle(titleField.getText());
+					currNode.mp3.setInterpret(interpretField.getText());
+					currNode.mp3.setAlbum(albumField.getText());
+					currNode.mp3.setYear(yearField.getText());
 				}
 
 				// for debug only
@@ -130,22 +127,6 @@ public class GUI {
 
 		// the cover - so far hardcoded
 		imageLabel = new ImageLabel();
-		File file = new File("./Content/The-Beatles-�-White-Album.jpg");
-		BufferedImage originalImage = null;
-		 try {
-		 originalImage = ImageIO.read(file);
-		 } catch (IOException e1) {
-		 }
-		// if no image is available
-		if (originalImage == null) {
-			imageIcon = new ImageIcon();
-		}
-		// if an image exists
-		else {
-			imageIcon = new ImageIcon(originalImage);
-			imageLabel.setIcon(imageIcon);
-		}
-
 		// Event for choosing a new cover or deleting the existing one
 		imageLabel.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -157,10 +138,14 @@ public class GUI {
 					choosenFile = chooser.getSelectedFile();
 					BufferedImage image = null;
 					try {
-						image = ImageIO.read(choosenFile);
+						if(choosenFile != null) {
+							image = ImageIO.read(choosenFile);
+						}
 					} catch (IOException ex) {
 					}
-					imageLabel.setIcon(new ImageIcon(image));
+					if(image != null) {
+						imageLabel.setIcon(new ImageIcon(image));
+					}
 					break;
 				// if right mouse button is pressed, delete existing Icon
 				case MouseEvent.BUTTON3:
@@ -184,7 +169,7 @@ public class GUI {
 		yearField.setBorder(textFieldBorder);
 
 		// Seperatoren-> weglassen oder findet ihr das ok?
-		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "2,1, 2,12");
+		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");
 		mainPanel.add(new JSeparator(JSeparator.HORIZONTAL), "4,11, 6,11");
 
 		// das button panel
@@ -203,14 +188,113 @@ public class GUI {
 		mainPanel.add(interpretField, "4,5");
 		mainPanel.add(albumField, "6,5, 6,5");
 		mainPanel.add(yearField, "6,8, 6,8");
+		
+		if(tree != null) {
+			tree.addTreeSelectionListener(new TreeSelectionListener() {
+				
+				@Override
+				public void valueChanged(TreeSelectionEvent e) {
+					if(tree.getLastSelectedPathComponent() instanceof MP3Node) {
+						currNode = (MP3Node) tree.getLastSelectedPathComponent();
+						titleField.setText(currNode.mp3.getTitle());
+						interpretField.setText(currNode.mp3.getInterpret());
+						albumField.setText(currNode.mp3.getAlbum());
+						yearField.setText(currNode.mp3.getYear());
+						imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
+					}
+					
+				}
+			});
+			
+			mainPanel.add(new JScrollPane(tree), "1,1, 1,12");
+		}
 
 		frame.add(mainPanel);
+		frame.setVisible(true);
 	}
 
 	/**
-	 * @param args
+	 * @return the imageLabel
 	 */
-	public static void main(String[] args) {
-		new GUI();
+	public ImageLabel getImageLabel() {
+		return imageLabel;
 	}
+
+	/**
+	 * @param imageLabel the imageLabel to set
+	 */
+	public void setImageLabel(ImageLabel imageLabel) {
+		this.imageLabel = imageLabel;
+	}
+
+	/**
+	 * @return the titleField
+	 */
+	public JTextField getTitleField() {
+		return titleField;
+	}
+
+	/**
+	 * @param titleField the titleField to set
+	 */
+	public void setTitleField(JTextField titleField) {
+		this.titleField = titleField;
+	}
+
+	/**
+	 * @return the interpretField
+	 */
+	public JTextField getInterpretField() {
+		return interpretField;
+	}
+
+	/**
+	 * @param interpretField the interpretField to set
+	 */
+	public void setInterpretField(JTextField interpretField) {
+		this.interpretField = interpretField;
+	}
+
+	/**
+	 * @return the albumField
+	 */
+	public JTextField getAlbumField() {
+		return albumField;
+	}
+
+	/**
+	 * @param albumField the albumField to set
+	 */
+	public void setAlbumField(JTextField albumField) {
+		this.albumField = albumField;
+	}
+
+	/**
+	 * @return the yearField
+	 */
+	public JTextField getYearField() {
+		return yearField;
+	}
+
+	/**
+	 * @param yearField the yearField to set
+	 */
+	public void setYearField(JTextField yearField) {
+		this.yearField = yearField;
+	}
+
+	/**
+	 * @return the tree
+	 */
+	public JTree getTree() {
+		return tree;
+	}
+
+	/**
+	 * @param tree the tree to set
+	 */
+	public void setTree(JTree tree) {
+		this.tree = tree;
+	}
+
 }
