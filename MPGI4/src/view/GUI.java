@@ -125,8 +125,7 @@ public class GUI {
 				}
 				*/
 				// for debug only
-				System.out.println("" + titleString + ", " + interpretString
-						+ ", " + albumString + ", " + yearString);
+				
 			}
 		});
 

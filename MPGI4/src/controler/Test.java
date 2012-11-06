@@ -52,7 +52,7 @@ public class Test {
 		/*
 		 * Hardcoded example of a Tree
 		 */
-		MP3Node node1 = new MP3Node(file1, "File1.mp3");
+		MP3Node node1 = new MP3Node(file1, "File1.mp3");//das steht nachher auch im Node
 		MP3Node node2 = new MP3Node(file2, "File2.mp3");
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Musik");
 		DefaultMutableTreeNode directory1 = new DefaultMutableTreeNode("Beispiel1");
