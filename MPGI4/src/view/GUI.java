@@ -33,7 +33,7 @@ import javax.swing.event.TreeSelectionListener;
 public class GUI {
 	
 	static File choosenFile = null;
-
+    BufferedImage image=null;
 	JFrame frame;
 
 	JPanel mainPanel;
@@ -107,6 +107,12 @@ public class GUI {
 					currNode.mp3.setInterpret(interpretField.getText());
 					currNode.mp3.setAlbum(albumField.getText());
 					currNode.mp3.setYear(yearField.getText());
+					  if(image == null){                      
+	                    	currNode.mp3.setCover(new BufferedImage(2,2,2));  					
+						}
+	                    else
+						currNode.mp3.setCover(image);
+						
 				}
 				
 				/*
@@ -144,8 +150,7 @@ public class GUI {
 				case MouseEvent.BUTTON1:
 					JFileChooser chooser = new JFileChooser("./Content");
 					int returnVA1 = chooser.showOpenDialog(imageLabel);
-					choosenFile = chooser.getSelectedFile();
-					BufferedImage image = null;
+					choosenFile = chooser.getSelectedFile();				
 					try {
 						if(choosenFile != null) {
 							image = ImageIO.read(choosenFile);
@@ -159,7 +164,8 @@ public class GUI {
 				// if right mouse button is pressed, delete existing Icon
 				case MouseEvent.BUTTON3:
 					ImageIcon imageI = new ImageIcon();
-					imageLabel.setIcon(imageI);
+					imageLabel.setIcon(imageI);	
+					image=null;
 				default:
 					break;
 				}
