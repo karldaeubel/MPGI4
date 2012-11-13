@@ -173,15 +173,15 @@ public class GUI {
 
 		});
 
-		Border textFieldBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
+		//Border textFieldBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 		titleField = new JTextField(20);
-		titleField.setBorder(textFieldBorder);
+		//titleField.setBorder(textFieldBorder);
 		interpretField = new JTextField(20);
-		interpretField.setBorder(textFieldBorder);
+		//interpretField.setBorder(textFieldBorder);
 		albumField = new JTextField(20);
-		albumField.setBorder(textFieldBorder);
+		//albumField.setBorder(textFieldBorder);
 		yearField = new JTextField(20);
-		yearField.setBorder(textFieldBorder);
+		//yearField.setBorder(textFieldBorder);
 
 		// Seperatoren-> weglassen oder findet ihr das ok?
 		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");

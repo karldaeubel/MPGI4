@@ -44,14 +44,14 @@ public class ImageLabel extends JLabel {
 			
 			// painting a border
 			g2d.setColor(Color.BLACK);
-			g2d.setStroke(new BasicStroke(2));
+			g2d.setStroke(new BasicStroke(1));
 			g2d.drawRect(1, 1, width - 2, height - 2);
 		}
 		
 		else{
 			// painting a border
 			g2d.setColor(Color.BLACK);
-			g2d.setStroke(new BasicStroke(2));
+			g2d.setStroke(new BasicStroke(1));
 			g2d.drawRect(2, 2, width - 2, height - 2);
 		}
 	}
