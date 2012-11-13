@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import layout.TableLayout;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -23,7 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
@@ -173,15 +170,14 @@ public class GUI {
 
 		});
 
-		//Border textFieldBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
+		
 		titleField = new JTextField(20);
-		//titleField.setBorder(textFieldBorder);
+
 		interpretField = new JTextField(20);
-		//interpretField.setBorder(textFieldBorder);
+
 		albumField = new JTextField(20);
-		//albumField.setBorder(textFieldBorder);
+
 		yearField = new JTextField(20);
-		//yearField.setBorder(textFieldBorder);
 
 		// Seperatoren-> weglassen oder findet ihr das ok?
 		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");
