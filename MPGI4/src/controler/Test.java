@@ -12,7 +12,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import resources.TestImages;
 import view.GUI;
-import view.ImageLabel;
 import view.MP3Node;
 
 import model.MP3File;
@@ -23,6 +22,7 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		//the first MP3file
 		MP3File file1 = new MP3File("titel1", "interpret1", "album1", "jahr1");
 		MemoryCacheImageInputStream stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(TestImages.jpeg));
 		
@@ -35,7 +35,7 @@ public class Test {
 		if(image1 != null) {
 			file1.setCover(image1);
 		}
-		
+		//the second MP3file initialisation
 		MP3File file2 = new MP3File();
 		stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(TestImages.png));
 		BufferedImage image2 = null;

@@ -8,8 +8,12 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+/**
+ * a class to hold a picture in a Label and resize it to fit it into the size of the label
+ * @author MPGI
+ */
 public class ImageLabel extends JLabel {
-
+	//the picture to show on the label
 	private ImageIcon imageIcon;
 
 	public ImageLabel() {
@@ -32,13 +36,14 @@ public class ImageLabel extends JLabel {
 		// to maintain ratio
 		int width = getWidth();
 		int height = getHeight();
-
+		//calculate the right size of the picture
 		if (width <= height)
 			height = width;
 		else
 			width = height;
 
 		if (imageIcon != null) {
+			//resize the picture
 			g2d.drawImage(imageIcon.getImage(), 0, 0, width, height, 0, 0,
 					imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
 			

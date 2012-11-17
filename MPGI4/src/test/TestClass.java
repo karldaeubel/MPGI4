@@ -1,8 +1,12 @@
 package test;
 
 import org.junit.Test;
-import org.junit.Assert;
 
+/**
+ * a class to test other methods
+ * @author MPGI
+ *
+ */
 public class TestClass {
 	
 	@Test

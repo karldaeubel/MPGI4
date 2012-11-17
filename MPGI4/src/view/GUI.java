@@ -24,15 +24,20 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-//import exceptions.YearOutOfTimePeriodException;
+import exceptions.YearOutOfTimePeriodException;
 
-
+/**
+ * the class to show the User Interface of the Tag-Editor
+ * @author MPGI
+ */
 public class GUI {
 	
-	static File choosenFile = null;
+	File choosenFile = null;
     BufferedImage image=null;
+    //the main frame
 	JFrame frame;
-
+	
+	//some Components to show at the frame
 	JPanel mainPanel;
 
 	JLabel titleLabel;
@@ -41,10 +46,7 @@ public class GUI {
 	JLabel yearLabel;
 	JLabel coverLabel;
 
-	// these variables are necessary for displaying the cover
-	// short guide: new ImageIcon(cover.jpg) -> new JLabel(imageIcon)
 	ImageLabel imageLabel;
-	ImageIcon imageIcon;
 
 	JTextField titleField;
 	JTextField interpretField;
@@ -52,13 +54,6 @@ public class GUI {
 	JTextField yearField;
 
 	JButton save;
-
-	// these strings represent the tags
-	// later they should be moved to MODEL
-	String titleString = "";
-	String interpretString = "";
-	String albumString = "";
-	String yearString = "";
 	
 	JTree tree;
 	
@@ -98,7 +93,6 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("SAVE!!");
-				//TODO Bilder hinzufügen! und bei änderung in currNode ändern
 				if(currNode != null) {
 					currNode.mp3.setTitle(titleField.getText());
 					currNode.mp3.setInterpret(interpretField.getText());
@@ -139,6 +133,7 @@ public class GUI {
 		coverLabel = new JLabel("Cover");
 
 		imageLabel = new ImageLabel();
+		imageLabel.setToolTipText("links Klick um ein neues Bild zu laden, rechts Klick um das Bild zu löschen");
 		// Event for choosing a new cover or deleting the existing one
 		imageLabel.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -170,16 +165,11 @@ public class GUI {
 
 		});
 
-		
 		titleField = new JTextField(20);
-
 		interpretField = new JTextField(20);
-
 		albumField = new JTextField(20);
-
 		yearField = new JTextField(20);
 
-		// Seperatoren-> weglassen oder findet ihr das ok?
 		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");
 		mainPanel.add(new JSeparator(JSeparator.HORIZONTAL), "4,11, 6,11");
 

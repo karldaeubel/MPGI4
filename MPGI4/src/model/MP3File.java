@@ -2,8 +2,12 @@ package model;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * a class to hold all necessary informations of an MP3 file
+ * @author MPGI
+ */
 public class MP3File {
-	
+	//some fields to store all needed informations
 	private String title;
 	private String interpret;
 	private String album;
@@ -114,6 +118,4 @@ public class MP3File {
 	public void setCover(BufferedImage cover) {
 		this.cover = cover;
 	}
-	
-	
 }
