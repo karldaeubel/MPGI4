@@ -4,11 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import layout.TableLayout;
+import model.MyTree;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import exceptions.YearOutOfTimePeriodException;
 
@@ -53,8 +59,10 @@ public class GUI {
 	JTextField albumField;
 	JTextField yearField;
 
+	JButton newFolder;
 	JButton save;
 	
+	JScrollPane pane;
 	JTree tree;
 	
 	MP3Node currNode;
@@ -86,6 +94,28 @@ public class GUI {
 				{ TableLayout.PREFERRED } };
 		JPanel buttonPanel = new JPanel(new TableLayout(buttonlayout));
 
+		newFolder = new JButton("Ordner Einlesen...");
+		newFolder.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnval = chooser.showOpenDialog(tree);
+				if(returnval == JFileChooser.APPROVE_OPTION) {
+					Path p = Paths.get(chooser.getSelectedFile().getPath());
+					MyTree tr = new MyTree(p);
+					setTree(tr.root);
+					try {
+						Files.walkFileTree(p, tr);
+					}catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		// ein Save button
 		save = new JButton("Speichern");
 		save.addActionListener(new ActionListener() {
@@ -98,12 +128,11 @@ public class GUI {
 					currNode.mp3.setInterpret(interpretField.getText());
 					currNode.mp3.setAlbum(albumField.getText());
 					currNode.mp3.setYear(yearField.getText());
-					  if(image == null){                      
+					if(image == null){                      
 	                    	currNode.mp3.setCover(new BufferedImage(2,2,2));  					
-						}
-	                    else
+					} else {
 						currNode.mp3.setCover(image);
-						
+					}
 				}
 				
 				/*
@@ -173,6 +202,7 @@ public class GUI {
 		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");
 		mainPanel.add(new JSeparator(JSeparator.HORIZONTAL), "4,11, 6,11");
 
+		mainPanel.add(newFolder,"1,12");
 		// das button panel
 		buttonPanel.add(save, "2,0");
 		mainPanel.add(buttonPanel, "6,12");
@@ -190,26 +220,10 @@ public class GUI {
 		mainPanel.add(albumField, "6,5, 6,5");
 		mainPanel.add(yearField, "6,8, 6,8");
 		
-		if(tree != null) {
-			tree.addTreeSelectionListener(new TreeSelectionListener() {
-				
-				@Override
-				public void valueChanged(TreeSelectionEvent e) {
-					if(tree.getLastSelectedPathComponent() instanceof MP3Node) {
-						currNode = (MP3Node) tree.getLastSelectedPathComponent();
-						titleField.setText(currNode.mp3.getTitle());
-						interpretField.setText(currNode.mp3.getInterpret());
-						albumField.setText(currNode.mp3.getAlbum());
-						yearField.setText(currNode.mp3.getYear());
-						imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
-					}
-					
-				}
-			});
-			
-			mainPanel.add(new JScrollPane(tree), "1,1, 1,12");
-		}
-
+		tree = new JTree(new DefaultMutableTreeNode());
+		pane = new JScrollPane(tree);
+		mainPanel.add(pane, "1,1, 1,10");
+		
 		frame.add(mainPanel);
 		frame.setVisible(true);
 	}
@@ -294,8 +308,31 @@ public class GUI {
 	/**
 	 * @param tree the tree to set
 	 */
-	public void setTree(JTree tree) {
-		this.tree = tree;
+	public void setTree(DefaultMutableTreeNode root) {
+		mainPanel.remove(pane);
+		
+		tree = new JTree(root);
+		
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				if(tree.getLastSelectedPathComponent() instanceof MP3Node) {
+					currNode = (MP3Node) tree.getLastSelectedPathComponent();
+					titleField.setText(currNode.mp3.getTitle());
+					interpretField.setText(currNode.mp3.getInterpret());
+					albumField.setText(currNode.mp3.getAlbum());
+					yearField.setText(currNode.mp3.getYear());
+					imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
+					image = currNode.mp3.getCover();
+				}
+				
+			}
+		});
+		pane = new JScrollPane(tree);
+		mainPanel.add(pane, "1,1, 1,10");
+		
+		mainPanel.validate();
 	}
 
 }

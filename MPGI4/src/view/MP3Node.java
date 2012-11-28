@@ -1,5 +1,7 @@
 package view;
 
+import java.io.File;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import model.MP3File;
@@ -28,5 +30,11 @@ public class MP3Node extends DefaultMutableTreeNode{
 	public MP3Node(MP3File file, Object obj) {
 		super(obj);
 		mp3 = file;
+	}
+	
+	@Override
+	public String toString() {
+		String temp[] = this.getUserObject().toString().split(File.separator);
+		return temp[temp.length -1];
 	}
 }
