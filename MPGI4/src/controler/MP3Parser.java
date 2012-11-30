@@ -99,7 +99,7 @@ public class MP3Parser {
 						}
 					}
 					mp3f.setAlbum(retval);
-				}else if(val.equalsIgnoreCase("TPE2")) {
+				}else if(val.equalsIgnoreCase("TPE1")) {
 					byte copy[] = frames.get(i);
 					String retval = "";
 					if(copy[10] == 0) {
