@@ -21,7 +21,7 @@ public class MP3Parser {
 	public static void main(String[] args) {
 		String fs = File.separator;
 		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "01_What_i_hope.mp3");	
-		Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "02_Quiet.mp3");	
+		Path file = Paths.get(fs + "homes" + fs + "stud" + fs + "daeubel" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "02_Quiet.mp3");	
 		
 		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Musik" + fs + "Green Day" + fs + "Dookie" + fs + "01 - Burnout.mp3");
 		//MP3Parser p = new MP3Parser(file.toFile());
@@ -69,11 +69,28 @@ public class MP3Parser {
 					break;
 				}
 			}
-			
+			for(int i = 0; i < 1; i++) {
+				for(int j = 0; j < frames.get(i).length; j++) {
+					System.out.println(frames.get(i)[j] + ", " + (char)frames.get(i)[j] + "...");
+				}
+			}
+			MP3File mp3f = new MP3File();
 			for(int i = 0; i < frames.size(); i++) {
 				String val = "" + (char)frames.get(i)[0] + (char)frames.get(i)[1] + (char)frames.get(i)[2] + (char)frames.get(i)[3];
 				if(val.equalsIgnoreCase("TALB")) {
 					System.out.println(val);
+					byte copy[] = frames.get(i);
+					if(copy[10] == 0) {
+						
+					}else if(copy[10] == 1) {
+						if(copy[11] == 0xFF && copy[12] == 0xFE) {
+							for(int k = 13; k < copy.length; k +=2) {
+								
+							}
+						}else if(copy[11] == 0xFE && copy[12] == 0xFF) {
+							
+						}
+					}
 				}else if(val.equalsIgnoreCase("TPE2")) {
 					System.out.println(val);
 				}else if(val.equalsIgnoreCase("TIT2")) {

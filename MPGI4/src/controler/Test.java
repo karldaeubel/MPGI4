@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import resources.TestImages;
 import view.GUI;
 import view.MP3Node;
 
