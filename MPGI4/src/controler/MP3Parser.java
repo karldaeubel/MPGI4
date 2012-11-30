@@ -26,9 +26,9 @@ public class MP3Parser {
 	public static void main(String[] args) {
 		String fs = File.separator;
 		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "01_What_i_hope.mp3");	
-		Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "02_Quiet.mp3");	
+		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "02_Quiet.mp3");	
 		
-		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Musik" + fs + "Green Day" + fs + "Dookie" + fs + "01 - Burnout.mp3");
+		Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Musik" + fs + "04 -  Hammerhead.mp3");
 		//MP3Parser p = new MP3Parser(file.toFile());
 		MP3Parser p = new MP3Parser(file);
 		p.parseMP3();
@@ -50,7 +50,7 @@ public class MP3Parser {
 				//not a valid MP3-Tag!
 				return null;
 			}
-			if(header[3] != 3 && header[4] != 0) {
+			if(header[3] != 3 || header[4] != 0) {
 				//not the valid version!
 				return null;
 			}
@@ -71,7 +71,7 @@ public class MP3Parser {
 				getFrames(offset);
 				offset += frames.getLast().length;
 				f.seek(offset);
-				if(!Character.isLetterOrDigit(f.readByte())) {
+				if(!Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte())) {
 					break;
 				}
 			}
@@ -198,16 +198,20 @@ public class MP3Parser {
 					}
 				}
 			}
-			
-			f.close();
 		}catch (FileNotFoundException e) {
 			System.err.println(e.toString());
 			e.printStackTrace();
 		}catch (IOException e) {
 			System.err.println(e.toString());
 			e.printStackTrace();
+		}finally {
+			try {
+				f.close();
+			}catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
-		
 		return mp3f;
 	}
 	
@@ -227,26 +231,5 @@ public class MP3Parser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public MP3Parser(File file) {
-		RandomAccessFile f;
-		try {
-			f = new RandomAccessFile(file, "r");
-			f.seek(0);
-			for(int i = 0; i < 32779; i++) {
-				int aByte = f.read();
-				System.out.println(Integer.toBinaryString(aByte) + ", " + aByte + ", " + (char)aByte);
-			}
-			
-			f.close();
-		}catch (FileNotFoundException e) {
-			System.out.println(e.toString());
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 }

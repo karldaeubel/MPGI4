@@ -44,6 +44,8 @@ public class MyTree extends SimpleFileVisitor<Path>{
 		}
 		MP3Parser parser = new MP3Parser(file);
 		MP3File f = parser.parseMP3();
+		if(f == null) return FileVisitResult.CONTINUE;
+		
 		Enumeration<DefaultMutableTreeNode> temp = root.breadthFirstEnumeration();
 		while(temp.hasMoreElements()){
 			DefaultMutableTreeNode t = temp.nextElement();
