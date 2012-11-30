@@ -10,6 +10,8 @@ import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import controler.MP3Parser;
+
 import view.DirectoryNode;
 import view.MP3Node;
 
@@ -40,12 +42,13 @@ public class MyTree extends SimpleFileVisitor<Path>{
 		if(!file.toString().endsWith(".mp3")) {
 			return FileVisitResult.CONTINUE;
 		}
+		MP3Parser parser = new MP3Parser(file);
+		MP3File f = parser.parseMP3();
 		Enumeration<DefaultMutableTreeNode> temp = root.breadthFirstEnumeration();
 		while(temp.hasMoreElements()){
 			DefaultMutableTreeNode t = temp.nextElement();
 			if(file.getParent().compareTo((Path) t.getUserObject()) == 0) {
-				//TODO: MP3 Parser schreiben, der dieses file einliest!!
-				t.add(new MP3Node(new MP3File(), file));
+				t.add(new MP3Node(f, file));
 				return FileVisitResult.CONTINUE;
 			}
 		}
