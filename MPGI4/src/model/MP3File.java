@@ -107,10 +107,7 @@ public class MP3File {
 	 * @return the cover
 	 */
 	public BufferedImage getCover() {
-		if(cover == null) {
-			return defCover;
-		}
-		return cover;
+		return cover == null ? defCover : cover;
 	}
 
 	/**
