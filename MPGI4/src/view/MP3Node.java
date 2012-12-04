@@ -34,7 +34,7 @@ public class MP3Node extends DefaultMutableTreeNode{
 	
 	@Override
 	public String toString() {
-		String temp[] = this.getUserObject().toString().split(File.separator);
+		String temp[] = this.getUserObject().toString().split("\\" + File.separator);
 		return temp[temp.length -1];
 	}
 }
