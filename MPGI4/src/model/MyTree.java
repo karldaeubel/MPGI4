@@ -20,7 +20,6 @@ public class MyTree extends SimpleFileVisitor<Path>{
 	public DirectoryNode root;
 	
 	public MyTree(Path path) {
-		String temp[] = path.toString().split(File.separator);
 		root = new DirectoryNode(path);
 	}
 	
