@@ -23,6 +23,8 @@ public class MP3Parser {
 	
 	RandomAccessFile f;
 	
+	MP3File mp3f;
+	
 	public static void main(String[] args) {
 		String fs = File.separator;
 		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "01_What_i_hope.mp3");	
@@ -35,12 +37,58 @@ public class MP3Parser {
 		//MP3Parser.parseMP3(file);
 	}
 	
+	public MP3Parser(MP3File MP3file, Path p) {
+		file = p;
+		mp3f = MP3file;
+	}
+	
 	public MP3Parser(Path f) {
 		this.file = f;
 	}
 	
+	/**
+	 * 
+	 */
+	public void writeMP3() {
+		try {
+			f = new RandomAccessFile(file.toFile(), "rw");
+			f.seek(0);
+			byte header[] = new byte[10];
+			f.read(header, 0, 10);
+			
+			int tagSize = 0;
+			for(int i = 0; i < 4; i++) {
+				tagSize = tagSize | (header[6] << 21) | (header[7] << 14) | (header[8] << 7) | (header[9]);
+			}
+			tagSize += 10;
+			frames = new LinkedList<byte[]>();
+			frames.add(header);
+			int offset = 10;
+			while(offset < tagSize ) {
+				getFrames(offset);
+				offset += frames.getLast().length;
+				f.seek(offset);
+				if(!Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte()) || !Character.isLetterOrDigit(f.readByte())) {
+					break;
+				}
+			}
+			for(int i = 1; i < frames.size(); i++) {
+				if(frames.get(i)[0] == 'T' && frames.get(i)[1] == 'A' && frames.get(i)[2] == 'L' && frames.get(i)[3] == 'B') {
+					char[] temp = mp3f.getAlbum().toCharArray();				
+				}
+			}
+			mp3f.getTitle().toCharArray();
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+	}
+		
+	/**
+	 * 
+	 * @return the MP3FIle to read from
+	 */
 	public MP3File parseMP3() {
-		MP3File mp3f = null;
+		mp3f = null;
 		try {
 			f = new RandomAccessFile(file.toFile(), "r");
 			f.seek(0);
