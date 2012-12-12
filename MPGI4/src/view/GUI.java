@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 
 import layout.TableLayout;
 import model.MyTree;
@@ -67,6 +68,8 @@ public class GUI {
 	
 	MP3Node currNode;
 
+	LinkedList<MP3Node> changedFiles;
+	
 	public GUI() {
 
 		frame = new JFrame("MP3-Tag Editor");
@@ -122,36 +125,18 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("SAVE!!");
 				if(currNode != null) {
+					changedFiles.add(currNode);
 					currNode.mp3.setTitle(titleField.getText());
 					currNode.mp3.setInterpret(interpretField.getText());
 					currNode.mp3.setAlbum(albumField.getText());
 					currNode.mp3.setYear(yearField.getText());
 					if(image == null){                      
-	                    	currNode.mp3.setCover(new BufferedImage(2,2,2));  					
+	                    	currNode.mp3.setCover(null);  					
 					} else {
 						currNode.mp3.setCover(image);
 					}
 				}
-				
-				/*
-				try {
-					int year = Integer.parseInt(yearString);
-					if (year <= 1905 || year > 2012)
-						throw new YearOutOfTimePeriodException();
-				}
-				// if year is not a number
-				catch (NumberFormatException formatException) {
-				System.out.println("Wrong fromat!");
-				}
-				// if year is not between 1905 and 2012
-				catch (YearOutOfTimePeriodException yearException) {
-					System.out.println("Year is not valid ");
-				}
-				*/
-				// for debug only
-				
 			}
 		});
 
@@ -323,7 +308,9 @@ public class GUI {
 					interpretField.setText(currNode.mp3.getInterpret());
 					albumField.setText(currNode.mp3.getAlbum());
 					yearField.setText(currNode.mp3.getYear());
-					imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
+					if(currNode.mp3.getCover() != null) {
+						imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
+					}
 					image = currNode.mp3.getCover();
 				}
 				

@@ -1,10 +1,7 @@
 package model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.nio.file.Path;
 
 /**
  * a class to hold all necessary informations of an MP3 file
@@ -16,20 +13,11 @@ public class MP3File {
 	private String interpret;
 	private String album;
 	private String year;
-	
-	private static BufferedImage defCover;
+		
 	private BufferedImage cover;
 	
 	public MP3File() {
 		title = interpret = album = year = "Unbekannt";
-		if(defCover == null) {
-			try {
-				defCover = ImageIO.read(new File("./Content/nofile.jpg"));
-			}catch (IOException e) {
-				System.out.println(e.toString());
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	public MP3File(String title, String interpret, String album, String year) {
@@ -107,7 +95,7 @@ public class MP3File {
 	 * @return the cover
 	 */
 	public BufferedImage getCover() {
-		return cover == null ? defCover : cover;
+		return cover;
 	}
 
 	/**

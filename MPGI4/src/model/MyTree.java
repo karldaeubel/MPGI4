@@ -49,7 +49,7 @@ public class MyTree extends SimpleFileVisitor<Path>{
 		while(temp.hasMoreElements()){
 			DefaultMutableTreeNode t = temp.nextElement();
 			if(file.getParent().compareTo((Path) t.getUserObject()) == 0) {
-				t.add(new MP3Node(f, file));
+				t.add(new MP3Node(f, file, file));
 				return FileVisitResult.CONTINUE;
 			}
 		}
