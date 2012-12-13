@@ -1,7 +1,6 @@
 package model;
 
 import java.awt.image.BufferedImage;
-import java.nio.file.Path;
 
 /**
  * a class to hold all necessary informations of an MP3 file
@@ -15,6 +14,7 @@ public class MP3File {
 	private String year;
 		
 	private BufferedImage cover;
+	private byte[] coverArray;
 	
 	public MP3File() {
 		title = interpret = album = year = "Unbekannt";
@@ -103,5 +103,23 @@ public class MP3File {
 	 */
 	public void setCover(BufferedImage cover) {
 		this.cover = cover;
+	}
+	
+	/**
+	 * @return the coverArray
+	 */
+	public byte[] getCoverArray() {
+		return coverArray;
+	}
+
+	/**
+	 * @param coverArray the coverArray to set
+	 */
+	public void setCoverArray(byte[] coverArray) {
+		this.coverArray = coverArray;
+	}
+
+	public String toString() {
+		return "Titel: " + title+ " Interpret: " + interpret + " Album: " + album + " Jahr: " + year + " Cover: " + (cover == null? false : true);
 	}
 }

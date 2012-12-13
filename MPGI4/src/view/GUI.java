@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +46,8 @@ public class GUI {
 	
 	File choosenFile = null;
     BufferedImage image=null;
+    byte[] imageArray;
+    
     //the main frame
 	JFrame frame;
 	
@@ -110,7 +113,6 @@ public class GUI {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(Arrays.deepToString(changedFiles.toArray()));
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnval = chooser.showOpenDialog(tree);
@@ -141,8 +143,10 @@ public class GUI {
 					currNode.mp3.setAlbum(albumField.getText());
 					currNode.mp3.setYear(yearField.getText());
 					if(image == null){                      
-	                    	currNode.mp3.setCover(null);  					
+	                    currNode.mp3.setCoverArray(null);
+						currNode.mp3.setCover(null);  					
 					} else {
+						currNode.mp3.setCoverArray(imageArray);
 						currNode.mp3.setCover(image);
 					}
 				}
@@ -182,6 +186,9 @@ public class GUI {
 					try {
 						if(choosenFile != null) {
 							image = ImageIO.read(choosenFile);
+							RandomAccessFile f = new RandomAccessFile(choosenFile, "r");
+							imageArray = new byte[(int)f.length()];
+							f.read(imageArray);
 						}
 					} catch (IOException ex) {
 					}
@@ -335,6 +342,7 @@ public class GUI {
 						imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
 					}
 					image = currNode.mp3.getCover();
+					imageArray = currNode.mp3.getCoverArray();
 				}
 				
 			}

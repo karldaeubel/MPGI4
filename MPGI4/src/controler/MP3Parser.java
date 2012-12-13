@@ -28,26 +28,6 @@ public class MP3Parser {
 	
 	MP3File mp3f;
 	
-	public static void main(String[] args) {
-		String fs = File.separator;
-		Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "01_What_i_hope.mp3");	
-		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Desktop" + fs + "mp3s"+ fs + "Bryyn"+ fs + "House Plants" + fs + "02_Quiet.mp3");	
-		
-		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Musik" + fs + "04 -  Hammerhead.mp3");
-		//MP3Parser p = new MP3Parser(file.toFile());
-		MP3File m = new MP3File("titel", "interpret", "album", "1999");
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(fs + "home" + fs + "karl" + fs + "git" + fs + "MPGI4" + fs + "MPGI4" + fs + "Content" + fs + "nofile.jpg"));
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		m.setCover(img);
-		MP3Parser p = new MP3Parser(file, m);
-		p.writeMP3();
-	}
-	
 	public MP3Parser(Path p, MP3File MP3file) {
 		file = p;
 		mp3f = MP3file;
@@ -131,7 +111,7 @@ public class MP3Parser {
 						i--;
 						continue;
 					}
-					byte[] pic = ((DataBufferByte) mp3f.getCover().getData().getDataBuffer()).getData();
+					byte[] pic = mp3f.getCoverArray();
 					byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
 					int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 					retval[0] = copy[0];
@@ -217,7 +197,7 @@ public class MP3Parser {
 				if((flag & (1 << 4)) == 0) {//APIC
 					if(mp3f.getCover() != null) {
 
-						byte[] pic = ((DataBufferByte) mp3f.getCover().getData().getDataBuffer()).getData();
+						byte[] pic = mp3f.getCoverArray();
 						byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
 						int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 						retval[0] = 'A';
@@ -256,7 +236,7 @@ public class MP3Parser {
 				for(int i = 0; i < frames.size(); i++) {
 					f.seek(off);
 					f.write(frames.get(i));
-					off +=frames.get(i).length;
+					off += frames.get(i).length;
 				}
 				for(int i = off; i < tagSize; i++) {
 					f.seek(off);
@@ -269,6 +249,7 @@ public class MP3Parser {
 				f.read(music);
 				f.setLength(newTagSize + music.length);
 				byte[] newHeader = new byte[10];
+				newTagSize -= 10;
 				for(int i = 0; i < 4; i++) {
 					newHeader[9 -i] = (byte)(newTagSize >> (i*8));
 				}
@@ -281,19 +262,18 @@ public class MP3Parser {
 				for(int i = 0; i < 6; i++) {
 					newHeader[i] = header[i];
 				}
-				
+				frames.set(0, newHeader);
 				int off = 0;
 				for(int i = 0; i < frames.size(); i++) {
 					f.seek(off);
 					f.write(frames.get(i));
 					off +=frames.get(i).length;
 				}
-				for(int i = off; i < tagSize; i++) {
-					f.seek(off);
+				for(int i = off; i < newTagSize +10; i++) {
+					f.seek(i);
 					f.writeByte(0);
-					off++;
 				}
-				f.seek(off);
+				f.seek(newTagSize +10);
 				f.write(music);
 			}
 			//TODO write it into the file from the "frames" list
@@ -428,6 +408,7 @@ public class MP3Parser {
 						for(int k = 0; k < picture.length; k++) {
 							picture[k] = copy[k + pointer +1];
 						}
+						mp3f.setCoverArray(picture);
 						if(mime.equalsIgnoreCase("image/jpeg")|| mime.equals("image/png")) {
 							
 							MemoryCacheImageInputStream stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(picture));
@@ -436,6 +417,7 @@ public class MP3Parser {
 							try {
 								image1 = ImageIO.read(stream);
 							}catch (IOException e) {
+								System.err.println(e.toString() + "bild konnte nicht geladen werden");
 								e.printStackTrace();
 							}
 							if(image1 != null) {
@@ -471,6 +453,7 @@ public class MP3Parser {
 						for(int k = 0; k < picture.length; k++) {
 							picture[k] = copy[k + pointer +1];
 						}
+						mp3f.setCoverArray(picture);
 						if(mime.equalsIgnoreCase("image/jpeg")|| mime.equalsIgnoreCase("image/png")) {
 							
 							MemoryCacheImageInputStream stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(picture));
@@ -479,6 +462,7 @@ public class MP3Parser {
 							try {
 								image1 = ImageIO.read(stream);
 							}catch (IOException e) {
+								System.err.println(e.toString() + "unicode picture konnte nicht geladen werden");
 								e.printStackTrace();
 							}
 							if(image1 != null) {
