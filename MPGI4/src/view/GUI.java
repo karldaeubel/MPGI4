@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import layout.TableLayout;
@@ -27,9 +28,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.JProgressBar;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import controler.MP3Parser;
 
 import exceptions.YearOutOfTimePeriodException;
 
@@ -62,6 +66,7 @@ public class GUI {
 
 	JButton newFolder;
 	JButton save;
+	JButton close;
 	
 	JScrollPane pane;
 	JTree tree;
@@ -82,6 +87,9 @@ public class GUI {
 
 	public void setGUI() {
 		// Das Layout für das Hauptpanel
+		
+		changedFiles = new LinkedList<MP3Node>();
+		
 		double[][] layout = {
 				{ 10, TableLayout.FILL, 5, 5, TableLayout.FILL, 10,
 						TableLayout.FILL, 10 },
@@ -93,7 +101,7 @@ public class GUI {
 
 		// Das Layout für den Button
 		double[][] buttonlayout = {
-				{ TableLayout.FILL, 10, TableLayout.PREFERRED },
+				{ 10, TableLayout.FILL, 10, TableLayout.PREFERRED, 10, TableLayout.PREFERRED },
 				{ TableLayout.PREFERRED } };
 		JPanel buttonPanel = new JPanel(new TableLayout(buttonlayout));
 
@@ -102,6 +110,7 @@ public class GUI {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println(Arrays.deepToString(changedFiles.toArray()));
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnval = chooser.showOpenDialog(tree);
@@ -140,6 +149,19 @@ public class GUI {
 			}
 		});
 
+		close = new JButton("Beenden");
+		close.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < changedFiles.size(); i++) {
+					MP3Parser p = new MP3Parser(changedFiles.get(i).p, changedFiles.get(i).mp3);
+					p.writeMP3();
+				}
+				frame.dispose();
+			}
+		});
+		
 		titleLabel = new JLabel("Titel");
 		interpretLabel = new JLabel("Interpret");
 		albumLabel = new JLabel("Album");
@@ -189,8 +211,9 @@ public class GUI {
 
 		mainPanel.add(newFolder,"1,12");
 		// das button panel
-		buttonPanel.add(save, "2,0");
-		mainPanel.add(buttonPanel, "6,12");
+		buttonPanel.add(save, "3,0");
+		buttonPanel.add(close, "5,0");
+		mainPanel.add(buttonPanel, "4,12,6,12");
 
 		mainPanel.add(titleLabel, "4,1");
 		mainPanel.add(interpretLabel, "4,4");

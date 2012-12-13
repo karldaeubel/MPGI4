@@ -2,6 +2,7 @@ package controler;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +36,14 @@ public class MP3Parser {
 		//Path file = Paths.get(fs + "home" + fs + "karl" + fs + "Musik" + fs + "04 -  Hammerhead.mp3");
 		//MP3Parser p = new MP3Parser(file.toFile());
 		MP3File m = new MP3File("titel", "interpret", "album", "1999");
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(fs + "home" + fs + "karl" + fs + "git" + fs + "MPGI4" + fs + "MPGI4" + fs + "Content" + fs + "nofile.jpg"));
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		m.setCover(img);
 		MP3Parser p = new MP3Parser(file, m);
 		p.writeMP3();
 	}
@@ -122,7 +131,7 @@ public class MP3Parser {
 						i--;
 						continue;
 					}
-					byte[] pic = ((DataBufferByte)(mp3f.getCover().getData().getDataBuffer())).getData();
+					byte[] pic = ((DataBufferByte) mp3f.getCover().getData().getDataBuffer()).getData();
 					byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
 					int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 					retval[0] = copy[0];
@@ -208,7 +217,7 @@ public class MP3Parser {
 				if((flag & (1 << 4)) == 0) {//APIC
 					if(mp3f.getCover() != null) {
 
-						byte[] pic = ((DataBufferByte)(mp3f.getCover().getData().getDataBuffer())).getData();
+						byte[] pic = ((DataBufferByte) mp3f.getCover().getData().getDataBuffer()).getData();
 						byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
 						int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 						retval[0] = 'A';
@@ -238,6 +247,55 @@ public class MP3Parser {
 					}
 				}
 			}
+			int newTagSize = 0;
+			for(int i = 0; i < frames.size(); i++) {
+				newTagSize += frames.get(i).length;
+			}
+			if(tagSize >= newTagSize) {//only overwrite everything
+				int off = 0;
+				for(int i = 0; i < frames.size(); i++) {
+					f.seek(off);
+					f.write(frames.get(i));
+					off +=frames.get(i).length;
+				}
+				for(int i = off; i < tagSize; i++) {
+					f.seek(off);
+					f.writeByte(0);
+					off++;
+				}
+			}else {
+				byte[] music = new byte[(int)f.length() - tagSize];
+				f.seek(tagSize);
+				f.read(music);
+				f.setLength(newTagSize + music.length);
+				byte[] newHeader = new byte[10];
+				for(int i = 0; i < 4; i++) {
+					newHeader[9 -i] = (byte)(newTagSize >> (i*8));
+				}
+				for(int i = 3; i > 0; i--) {
+					newHeader[9 -i] <<= i;
+					newHeader[9 -i] |= (byte) ((newHeader[9 -i +1] & (~((1<<(7 -i +1))-1))) >> (7 -i+1));
+					newHeader[9 -i] &= (1 << 7)-1;
+				}
+				newHeader[9] &= (1<<7)-1;
+				for(int i = 0; i < 6; i++) {
+					newHeader[i] = header[i];
+				}
+				
+				int off = 0;
+				for(int i = 0; i < frames.size(); i++) {
+					f.seek(off);
+					f.write(frames.get(i));
+					off +=frames.get(i).length;
+				}
+				for(int i = off; i < tagSize; i++) {
+					f.seek(off);
+					f.writeByte(0);
+					off++;
+				}
+				f.seek(off);
+				f.write(music);
+			}
 			//TODO write it into the file from the "frames" list
 		} catch (IOException e) {
 			System.err.println(e.toString());
@@ -245,7 +303,6 @@ public class MP3Parser {
 			try {
 				f.close();
 			}catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -270,7 +327,6 @@ public class MP3Parser {
 		try {
 			text = info.getBytes(charset);
 		}catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		byte[] retval = new byte[10 + 1 + bom + text.length];
@@ -351,8 +407,6 @@ public class MP3Parser {
 					String retval = getVal(frames.get(i));
 					mp3f.setYear(retval);
 				}else if(val.equalsIgnoreCase("APIC")) {
-					System.out.println("ha?!?!?!");
-
 					byte copy[] = frames.get(i);
 					int pointer = 11;
 					

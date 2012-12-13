@@ -1,18 +1,7 @@
 package controler;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import view.GUI;
-import view.MP3Node;
 
-import model.MP3File;
 
 public class Test {
 
@@ -47,8 +36,8 @@ public class Test {
 		}
 		*/
 		GUI tmp = new GUI();
-
 		tmp.setGUI();
+
 	}
 		
 

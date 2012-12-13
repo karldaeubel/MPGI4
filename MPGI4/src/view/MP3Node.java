@@ -11,6 +11,11 @@ import model.MP3File;
  * A class to hold the leaf in the tree that is a MP3File
  */
 public class MP3Node extends DefaultMutableTreeNode{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	//The MP3 file to store
 	MP3File mp3;
 	Path p;
