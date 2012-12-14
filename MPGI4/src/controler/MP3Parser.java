@@ -276,7 +276,6 @@ public class MP3Parser {
 				f.seek(newTagSize +10);
 				f.write(music);
 			}
-			//TODO write it into the file from the "frames" list
 		} catch (IOException e) {
 			System.err.println(e.toString());
 		}finally {

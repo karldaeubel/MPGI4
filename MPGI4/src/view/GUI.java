@@ -108,6 +108,7 @@ public class GUI {
 				{ TableLayout.PREFERRED } };
 		JPanel buttonPanel = new JPanel(new TableLayout(buttonlayout));
 
+
 		newFolder = new JButton("Ordner Einlesen...");
 		newFolder.addActionListener(new ActionListener() {
 			
@@ -201,6 +202,7 @@ public class GUI {
 					ImageIcon imageI = new ImageIcon();
 					imageLabel.setIcon(imageI);	
 					image=null;
+					imageArray = null;
 				default:
 					break;
 				}
