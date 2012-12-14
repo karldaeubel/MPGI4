@@ -51,9 +51,10 @@ public class ImageLabel extends JLabel {
 			g2d.setColor(Color.BLACK);
 			g2d.setStroke(new BasicStroke(1));
 			g2d.drawRect(1, 1, width - 2, height - 2);
-		}
-		
-		else{
+		}else{
+			
+			g2d.drawImage(imageIcon.getImage(), 0, 0, width, height, 0, 0,
+					imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
 			// painting a border
 			g2d.setColor(Color.BLACK);
 			g2d.setStroke(new BasicStroke(1));

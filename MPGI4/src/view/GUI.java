@@ -342,6 +342,8 @@ public class GUI {
 					yearField.setText(currNode.mp3.getYear());
 					if(currNode.mp3.getCover() != null) {
 						imageLabel.setIcon(new ImageIcon(currNode.mp3.getCover()));
+					}else {
+						imageLabel.setIcon(new ImageIcon());
 					}
 					image = currNode.mp3.getCover();
 					imageArray = currNode.mp3.getCoverArray();
@@ -351,7 +353,6 @@ public class GUI {
 		});
 		pane = new JScrollPane(tree);
 		mainPanel.add(pane, "1,1, 1,10");
-		
 		mainPanel.validate();
 	}
 

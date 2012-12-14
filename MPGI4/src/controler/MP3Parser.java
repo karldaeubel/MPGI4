@@ -202,7 +202,7 @@ public class MP3Parser {
 						int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 						retval[0] = 'A';
 						retval[1] = 'P';
-						retval[2] = 'P';
+						retval[2] = 'I';
 						retval[3] = 'C';
 						
 						retval[4] = (byte)(length >> 3*8);
@@ -492,19 +492,28 @@ public class MP3Parser {
 		String retval = "";
 		if(copy[10] == 0) {
 			//ASCII
-			for(int k = 11; k < copy.length; k++) {
-				retval += (char)copy[k];
+			try {
+				retval = new String(copy, 11, copy.length -11, "ISO-8859-1");
+			}catch (UnsupportedEncodingException e) {
+				System.out.println("Falsche ISO-Eingabe");
+				e.printStackTrace();
 			}
 		}else if(copy[10] == 1) {
 			//UNICODE
 			if((copy[11] & 0xFF) == 0xFF && (copy[12] & 0xFF) == 0xFE) {
-				for(int k = 13; k < copy.length; k +=2) {
-					retval += (char)(copy[k +1] << 8 | copy[k]);
+				try {
+					retval = new String(copy, 13, copy.length -13, "UTF-16LE");
+				}catch (UnsupportedEncodingException e) {
+					System.out.println("Falsche UTF-16-Eingabe");
+					e.printStackTrace();
 				}
 			}else if((copy[11] & 0xFF) == 0xFE && (copy[12] & 0xFF) == 0xFF) {
 				
-				for(int k = 13; k < copy.length; k +=2) {
-					retval += (char)(copy[k] << 8 | copy[k +1]);
+				try {
+					retval = new String(copy, 13, copy.length -13, "UTF-16BE");
+				}catch (UnsupportedEncodingException e) {
+					System.out.println("Falsche UTF-16-Eingabe");
+					e.printStackTrace();
 				}
 			}
 		}
