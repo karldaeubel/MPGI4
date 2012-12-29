@@ -1,6 +1,16 @@
 package model;
 
+
+
+
+
 import java.awt.image.BufferedImage;
+import java.io.File;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import controler.MP3Parser;
 
 /**
  * a class to hold all necessary informations of an MP3 file
@@ -12,6 +22,8 @@ public class MP3File {
 	private String interpret;
 	private String album;
 	private String year;
+	
+	public MP3Parser id3;
 		
 	private BufferedImage cover;
 	private byte[] coverArray;
@@ -34,6 +46,31 @@ public class MP3File {
 		this.year = year;
 		this.cover = image;
 	}
+	
+	 
+	public Element getDataForXML(Document document) {
+	        Element file = this.id3.getDataForXML(document);
+
+	        file.setAttribute("name", this.title);
+
+	        return file;
+	    }
+	
+	
+	//Todo wie kann ich aus dem übergebenen File die Tags mit dem Parser auslesen?
+	public MP3File (File file){
+		
+	}
+	
+	
+	 public MP3File(Element xmlElement, File file) {
+        // read id3 data with parser
+	        this.id3 = new MP3Parser(xmlElement, file);
+	        
+	    }
+	   
+
+
 
 	/**
 	 * @return the title
