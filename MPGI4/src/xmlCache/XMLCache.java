@@ -56,7 +56,7 @@ public class XMLCache {
 			Document document = builder.newDocument();                                 // this document represents the entire XML document; Document extends from Node
     		Element xmlCache = document.createElement("XMLCache");                     // this element represents the xml file, extends from Node
     		
-    		xmlCache.setAttribute("time of creation", new Long( System.currentTimeMillis()).toString());   	// write the time of creation of the cache file 
+    		xmlCache.setAttribute("timestamp", new Long( System.currentTimeMillis()).toString());   	// write the time of creation of the cache file 
     		document.appendChild(xmlCache);
     		writeToXmlFile(root, document, xmlCache);
     		
@@ -151,8 +151,7 @@ public class XMLCache {
 				//method of the interface filenamefilter
 				// Tests if a specified file should be included in a file list.
 				public boolean accept(File dir, String name) {
-					return (new File(dir, name)).isDirectory()
-							|| name.endsWith(".mp3");
+					return (new File(dir, name)).isDirectory() || name.endsWith(".mp3");
 				}
 			};
 
