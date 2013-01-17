@@ -1,10 +1,5 @@
 package xmlCache;
 
-
-
-
-
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +27,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import view.DirectoryNode;
+import view.MP3Node;
+
 
 
 public class XMLCache {
@@ -41,30 +39,31 @@ public class XMLCache {
 	
     public static void writeToXmlFile (DefaultMutableTreeNode root, String file ){
 		
+    	file += System.getProperty("file.separator") + "mp3cache.xml";
     	DocumentBuilder builder;
     	
     	// DocumentBuilderFactory is a class to produce DOM object trees in XML documents with its applications
     	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();         // Obtain a new instance of a DocumentBuilderFactory.	
     	factory.setValidating(true);                                                   // validate while parsing
     	factory.setIgnoringElementContentWhitespace(true);                             // to eliminate whitespaces when parsing the xml document
-    	factory.setIgnoringComments(true);                                             // to ignore comments when parsing the xml document
-    	
+    	factory.setIgnoringComments(true);                                             // to ignore comments when parsing the xml document    	
     	
     	try {
     		
 			builder = factory.newDocumentBuilder();                                    // obtain a new instance of a DOM Document object to build a DOM tree with.
 			Document document = builder.newDocument();                                 // this document represents the entire XML document; Document extends from Node
-    		Element xmlCache = document.createElement("XMLCache");                     // this element represents the xml file, extends from Node
+    		Element xmlCache = document.createElement("cache");                     // this element represents the xml file, extends from Node
     		
     		xmlCache.setAttribute("timestamp", new Long( System.currentTimeMillis()).toString());   	// write the time of creation of the cache file 
     		document.appendChild(xmlCache);
     		writeToXmlFile(root, document, xmlCache);
     		
     		TransformerFactory tFactory = TransformerFactory.newInstance();
+    		tFactory.setAttribute("indent-number", new Integer(2));
     	    Transformer transformer = tFactory.newTransformer();
     	    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "cache.dtd"); //doctype-system specifies the system identifier to be used in the document type declaration.
     	    transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //add additional whitespace when outputting the result tree
-    	    transformer.setOutputProperty("indent", "2");
+    	    //transformer.setOutputProperty("indent-number", "2");
     	    
     	    
     	    //going to write to the file a number of times -- especially many short writes like a list of a thousand names or something like that
@@ -76,8 +75,11 @@ public class XMLCache {
 		    transformer.transform(new DOMSource(document), new StreamResult(output)); //Transform the XML Source to a Result.
     	
     	} catch (IOException e){
+    		System.err.println("IO-Exception" + e.getMessage());
     	} catch (TransformerConfigurationException e) {
+    		System.err.println("TransF Error" + e.getMessage());
 		} catch (TransformerException e) {
+			System.err.println("Transformer Exception" + e.getMessage());
     	} catch (ParserConfigurationException e) {
     		System.err.println("Parser Configuration Error: " + e.getMessage());
 			
@@ -89,24 +91,26 @@ public class XMLCache {
 		//An object that implements the Enumeration interface generates a series of elements, one at a time. 
 		//Successive calls to the nextElement method return successive elements of the series. 
 		
-		Enumeration<DefaultMutableTreeNode> leafs = node.children(); //    Creates and returns a forward-order enumeration of this node's children.
 		
-		DefaultMutableTreeNode leafNode = null;
-    	if (node.getUserObject() instanceof MP3File) {
-    		Element file = ((MP3File) node.getUserObject()).getDataForXML(document);
+    	if (node instanceof MP3Node) {
+    		Element file = ((MP3Node) node).getMp3Information(document);
             element.appendChild(file);
 
         } else {
+        	Enumeration<DefaultMutableTreeNode> leafs = node.children(); //    Creates and returns a forward-order enumeration of this node's children.
+    		
+    		DefaultMutableTreeNode leafNode;
+    		
             Element folder = document.createElement("folder");
-            folder.setAttribute("name", node.getUserObject().toString());
+            folder.setAttribute("name", ((DirectoryNode) node).p.toString());
             element.appendChild(folder);
             while(leafs.hasMoreElements()) {
-            	leafNode = (DefaultMutableTreeNode) leafs.nextElement();
+            	leafNode = leafs.nextElement();
                 writeToXmlFile(leafNode, document, folder);
             }
         }
 	}
-	
+/*	
 	public static boolean readFromXmlFile(DefaultMutableTreeNode root,String file,  File baseDir) {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -234,5 +238,5 @@ public class XMLCache {
 	            }
 	        }
 	    }
-
+*/
 }

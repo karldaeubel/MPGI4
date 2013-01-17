@@ -2,7 +2,7 @@ package controler;
 
 
 
-
+import org.apache.commons.codec.binary.Base64;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.BufferedInputStream;
@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-import org.apache.commons.codec.binary.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -72,7 +71,7 @@ public class MP3Parser {
 					break;
 				}
 			}
-			/*000e dcba
+			/* int flag = 000e dcba; //(binÃ¤r)
 			 * a TALB was visited
 			 * b TPE1 was visited
 			 * ...
@@ -114,16 +113,17 @@ public class MP3Parser {
 						continue;
 					}
 					frames.set(i, createNewFrame(mp3f.getYear(), frames.get(i)));
-				}else if(info.equals("APIC")) {
+				}else if(info.equals("APIC")) {//Picture
 					flag = flag | (1 << 4);
-					if(mp3f.getCover() == null) {
+					if(mp3f.getCover() == null || mp3f.getCoverArray() == null) {
 						frames.remove(i);
 						i--;
 						continue;
 					}
 					byte[] pic = mp3f.getCoverArray();
-					byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
-					int length = 1 + 10 + 1 + 1 + 1 + pic.length;
+					String temp = mp3f.getMimeType();
+					byte[] retval = new byte[10 + 1 + temp.length() + 1 + 1 + 1 + pic.length];
+					int length = 1 + temp.length() + 1 + 1 + 1 + pic.length;
 					retval[0] = copy[0];
 					retval[1] = copy[1];
 					retval[2] = copy[2];
@@ -137,15 +137,15 @@ public class MP3Parser {
 					retval[10] = 0;
 					
 					//TODO genaues Format einlesen!!!!
-					String temp = "image/jpeg";
+					
 					for(int j = 0; j < temp.length(); j++) {
 						retval[11 +j] = temp.getBytes()[j];
 					}
-					retval[21] = 0;
-					retval[22] = 3;
-					retval[23] = 0;
+					retval[11 + temp.length()] = 0;
+					retval[12 + temp.length()] = 3;
+					retval[13 + temp.length()] = 0;
 					for(int j = 0; j < pic.length; j++) {
-						retval[24 +j] = pic[j];
+						retval[14 + temp.length() +j] = pic[j];
 					}
 					frames.set(i, retval);
 				}
@@ -208,7 +208,8 @@ public class MP3Parser {
 					if(mp3f.getCover() != null) {
 
 						byte[] pic = mp3f.getCoverArray();
-						byte[] retval = new byte[10 + 1 + 10 + 1 + 1 + 1 + pic.length];
+						String temp = "image/jpeg";
+						byte[] retval = new byte[10 + 1 + temp.length() + 1 + 1 + 1 + pic.length];
 						int length = 1 + 10 + 1 + 1 + 1 + pic.length;
 						retval[0] = 'A';
 						retval[1] = 'P';
@@ -222,16 +223,14 @@ public class MP3Parser {
 						
 						retval[10] = 0;
 						
-						//TODO genaues Format einlesen!!!!
-						String temp = "image/jpeg";
 						for(int j = 0; j < temp.length(); j++) {
 							retval[11 +j] = temp.getBytes()[j];
 						}
-						retval[21] = 0;
-						retval[22] = 3;
-						retval[23] = 0;
+						retval[11 + temp.length()] = 0;
+						retval[12 + temp.length()] = 3;
+						retval[13 + temp.length()] = 0;
 						for(int j = 0; j < pic.length; j++) {
-							retval[24 +j] = pic[j];
+							retval[14 +temp.length() +j] = pic[j];
 						}
 						frames.add(retval);
 					}
@@ -419,7 +418,7 @@ public class MP3Parser {
 						}
 						mp3f.setCoverArray(picture);
 						if(mime.equalsIgnoreCase("image/jpeg")|| mime.equals("image/png")) {
-							
+							mp3f.setMimeType(mime);
 							MemoryCacheImageInputStream stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(picture));
 							
 							BufferedImage image1 = null;
@@ -464,7 +463,7 @@ public class MP3Parser {
 						}
 						mp3f.setCoverArray(picture);
 						if(mime.equalsIgnoreCase("image/jpeg")|| mime.equalsIgnoreCase("image/png")) {
-							
+							mp3f.setMimeType(mime);
 							MemoryCacheImageInputStream stream = new MemoryCacheImageInputStream(new ByteArrayInputStream(picture));
 							
 							BufferedImage image1 = null;
@@ -556,7 +555,7 @@ public class MP3Parser {
 
         for(int i = 0; i < frames.size(); i++) {
             Element tag;
-            String val = "" + (char)frames.get(i)[0] + (char)frames.get(i)[1] + (char)frames.get(i)[2] + (char)frames.get(i)[3]; //von oben übernommen
+            String val = "" + (char)frames.get(i)[0] + (char)frames.get(i)[1] + (char)frames.get(i)[2] + (char)frames.get(i)[3]; //von oben ï¿½bernommen
 			if(val.equalsIgnoreCase("APIC")) {//Frontcover
 						
 				// cover (mimetype,pictype,description,data)
@@ -601,7 +600,7 @@ public class MP3Parser {
              }
             if (!tag.getTagName().equals("ignoredtag")) {
                  Element text = document.createElement("text");
-         //ToDo  text.setTextContent(?); --> ich weiß noch nich, was darein kommt
+         //ToDo  text.setTextContent(?); --> ich weiï¿½ noch nich, was darein kommt
                  tag.appendChild(text);
             }
             tags.appendChild(tag);
@@ -647,7 +646,7 @@ public class MP3Parser {
                 }
         */
               
-        /* ToDo hier will ich den header zu dem frame array hinzufügen
+        /* ToDo hier will ich den header zu dem frame array hinzufï¿½gen
                 if (tag.getTagName().equals("ignoredtag")) {
                     frames = new Frame(Base64.decodeBase64(tag.getTextContent()), 0, frameHeader);
                 } else if (tag.getTagName().equals("cover")) {

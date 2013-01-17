@@ -20,7 +20,9 @@ public class MyTree extends SimpleFileVisitor<Path>{
 	
 	public DirectoryNode root;
 	
-	public MyTree(Path path) {
+	private boolean reUse;
+	
+	public MyTree(Path path, boolean re) {
 		root = new DirectoryNode(path);
 	}
 	
@@ -29,9 +31,11 @@ public class MyTree extends SimpleFileVisitor<Path>{
 		Enumeration<DefaultMutableTreeNode> temp = root.breadthFirstEnumeration();
 		while(temp.hasMoreElements()){
 			DefaultMutableTreeNode t = temp.nextElement();
-			if(dir.getParent().compareTo((Path) t.getUserObject()) == 0) {
-				t.add(new DirectoryNode(dir));
-				return FileVisitResult.CONTINUE;
+			if(t instanceof DirectoryNode) {
+				if(dir.getParent().compareTo( ((DirectoryNode) t).p) == 0) {
+					t.add(new DirectoryNode(dir));
+					return FileVisitResult.CONTINUE;
+				}
 			}
 		}
 		return FileVisitResult.CONTINUE;
@@ -49,9 +53,11 @@ public class MyTree extends SimpleFileVisitor<Path>{
 		Enumeration<DefaultMutableTreeNode> temp = root.breadthFirstEnumeration();
 		while(temp.hasMoreElements()){
 			DefaultMutableTreeNode t = temp.nextElement();
-			if(file.getParent().compareTo((Path) t.getUserObject()) == 0) {
-				t.add(new MP3Node(f, file, file));
-				return FileVisitResult.CONTINUE;
+			if(t instanceof DirectoryNode) {
+				if(file.getParent().compareTo(((DirectoryNode) t).p) == 0) {
+					t.add(new MP3Node(f, file, file));
+					return FileVisitResult.CONTINUE;
+				}
 			}
 		}
 		return FileVisitResult.CONTINUE;

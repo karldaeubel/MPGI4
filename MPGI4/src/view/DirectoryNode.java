@@ -1,19 +1,21 @@
 package view;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class DirectoryNode extends DefaultMutableTreeNode{
 	
-	public DirectoryNode(Object path) {
-		super(path);
+	public Path p;
+	
+	public DirectoryNode(Path path) {
+		super();
+		p = path;
 	}
 
 	@Override
 	public String toString() {
-		String temp[] = this.getUserObject().toString().split("\\" + File.separator);
-		if(temp.length > 0) return temp[temp.length -1];
-		return "/";
+		return p.getFileName().toString();
 	}
 }

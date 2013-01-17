@@ -34,6 +34,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import xmlCache.XMLCache;
+
 import controler.MP3Parser;
 
 import exceptions.YearOutOfTimePeriodException;
@@ -47,6 +49,7 @@ public class GUI {
 	File choosenFile = null;
     BufferedImage image=null;
     byte[] imageArray;
+    String mimeType;
     
     //the main frame
 	JFrame frame;
@@ -118,8 +121,30 @@ public class GUI {
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnval = chooser.showOpenDialog(tree);
 				if(returnval == JFileChooser.APPROVE_OPTION) {
+					//write all changes you done
+					for(int i = 0; i < changedFiles.size(); i++) {
+						MP3Parser p = new MP3Parser(changedFiles.get(i).p, changedFiles.get(i).mp3);
+						p.writeMP3();
+					}
+					changedFiles.clear();
+					
+					//write to XML file!
+					if(tree != null) {
+						if(((DirectoryNode)tree.getModel().getRoot()).p != null) {
+							XMLCache.writeToXmlFile((DirectoryNode) (tree.getModel().getRoot()), ((DirectoryNode) tree.getModel().getRoot()).p.toString());
+						}
+					}
+					
+					//create new Tree
 					Path p = Paths.get(chooser.getSelectedFile().getPath());
-					MyTree tr = new MyTree(p);
+					File p1 = new File(p.toString() + "mp3cache.xml");
+					MyTree tr;
+					if(p1.exists()) {
+						tr = new MyTree(p, true);
+					}else {
+						tr = new MyTree(p, false);
+					}
+					
 					setTree(tr.root);
 					try {
 						Files.walkFileTree(p, tr);
@@ -142,13 +167,17 @@ public class GUI {
 					currNode.mp3.setTitle(titleField.getText());
 					currNode.mp3.setInterpret(interpretField.getText());
 					currNode.mp3.setAlbum(albumField.getText());
-					currNode.mp3.setYear(yearField.getText());
+					if(isValidYear()) {
+						currNode.mp3.setYear(yearField.getText());
+					}
 					if(image == null){                      
 	                    currNode.mp3.setCoverArray(null);
-						currNode.mp3.setCover(null);  					
+						currNode.mp3.setCover(null); 
+						currNode.mp3.setMimeType("");
 					} else {
 						currNode.mp3.setCoverArray(imageArray);
 						currNode.mp3.setCover(image);
+						currNode.mp3.setMimeType(mimeType);
 					}
 				}
 			}
@@ -163,6 +192,14 @@ public class GUI {
 					MP3Parser p = new MP3Parser(changedFiles.get(i).p, changedFiles.get(i).mp3);
 					p.writeMP3();
 				}
+				
+				if(tree != null) {
+					if(((DirectoryNode)tree.getModel().getRoot()).p != null) {
+						System.out.println(((DirectoryNode) tree.getModel().getRoot()).p.toString());
+						XMLCache.writeToXmlFile((DirectoryNode) (tree.getModel().getRoot()), ((DirectoryNode) tree.getModel().getRoot()).p.toString());
+					}
+				}
+				
 				frame.dispose();
 			}
 		});
@@ -182,10 +219,16 @@ public class GUI {
 				switch (e.getButton()) {
 				case MouseEvent.BUTTON1:
 					JFileChooser chooser = new JFileChooser("./Content");
-					int returnVA1 = chooser.showOpenDialog(imageLabel);
+					int returnVa1 = chooser.showOpenDialog(imageLabel);
 					choosenFile = chooser.getSelectedFile();				
 					try {
-						if(choosenFile != null) {
+						if(returnVa1 == JFileChooser.APPROVE_OPTION) {
+							String[] m = choosenFile.getName().split("\\.");
+							if(m[m.length -1].equalsIgnoreCase("jpeg") || m[m.length -1].equalsIgnoreCase("jpg")) {
+								mimeType = "image/jpeg";
+							}else if(m[m.length -1].equalsIgnoreCase("png")) {
+								mimeType = "image/png";
+							}
 							image = ImageIO.read(choosenFile);
 							RandomAccessFile f = new RandomAccessFile(choosenFile, "r");
 							imageArray = new byte[(int)f.length()];
@@ -237,12 +280,25 @@ public class GUI {
 		mainPanel.add(albumField, "6,5, 6,5");
 		mainPanel.add(yearField, "6,8, 6,8");
 		
-		tree = new JTree(new DefaultMutableTreeNode());
 		pane = new JScrollPane(tree);
+		
 		mainPanel.add(pane, "1,1, 1,10");
 		
 		frame.add(mainPanel);
 		frame.setVisible(true);
+	}
+	
+	private boolean isValidYear() {
+		char[] year = yearField.getText().toCharArray();
+		if(year.length != 4) {
+			return false;
+		}
+		for(int i = 0; i < year.length; i++) {
+			if(!Character.isDigit(year[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -347,6 +403,7 @@ public class GUI {
 					}
 					image = currNode.mp3.getCover();
 					imageArray = currNode.mp3.getCoverArray();
+					mimeType = currNode.mp3.getMimeType();
 				}
 				
 			}
