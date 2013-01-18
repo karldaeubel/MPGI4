@@ -253,8 +253,7 @@ public class XMLCache {
 
                 Element element2 = null;
                 for (int j = 0; j < element.getChildNodes().getLength(); j++) {
-                	System.out.println(((Element)element.getChildNodes().item(j)).getAttribute("name") + " " + newFile.getAbsolutePath());
-                    if (((Element)element.getChildNodes().item(j)).getAttribute("name").equals(newFile.getAbsolutePath())) {
+                	if (((Element)element.getChildNodes().item(j)).getAttribute("name").equals(newFile.getAbsolutePath())) {
                         element2 = (Element)element.getChildNodes().item(j);
                     }
                 }
@@ -271,8 +270,6 @@ public class XMLCache {
                     }
                     rootNode.add(newNode);
                 } else {
-                    
-                
                     if (element2 == null || newFile.lastModified() > changed) {
                     	//TODO ich habs geändert karl
                         //rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(newFile),false));

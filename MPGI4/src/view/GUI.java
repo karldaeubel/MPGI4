@@ -145,7 +145,7 @@ public class GUI {
 						//TODO -> real pathname for dtd file!!!!!!!!!
 						XMLCache.readFromXmlFile(d, p1.toString(), p.toFile());
 						
-						
+						setTree(d);
 					}else {//dont read from XML
 						tr = new MyTree(p, false);
 						setTree(tr.root);
