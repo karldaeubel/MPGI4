@@ -288,6 +288,7 @@ public class XMLCache {
 				}
 			}
 		
+			// add node for empty directory
 			if (i == 0) {
 				rootNode.add(new DefaultMutableTreeNode("(empty directory)",true));
 			}
@@ -337,7 +338,6 @@ public class XMLCache {
 	public static void readFileTree(DefaultMutableTreeNode dirNode, File dir) {
 
 	        File file;
-	        DefaultMutableTreeNode newNode;
 	        MP3File mp3File;
 
 	        if (dir.isDirectory()) {
@@ -356,14 +356,17 @@ public class XMLCache {
 	                file = new File(dir, child);
 	                if (file.isDirectory()) {   
 	                	// go through sub directories
-	                    dirNode.add(newNode = new DefaultMutableTreeNode(file.getName(), true));
+	                	DirectoryNode newNode = new DirectoryNode(file.toPath());
+	                    dirNode.add(newNode);
 	                    readFileTree(newNode, file);
 	               
 	                } else {
 	                
 	                	//TODO ich habs geändert karl...
 	                    //dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(file),false));
-	                	dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(),false));
+	                	MP3Parser p = new MP3Parser(file.toPath());
+	                	mp3File = p.parseMP3();
+	                	dirNode.add(new MP3Node(mp3File, file.toPath(), file.toPath()));
 	 //ToDo mp3File erzeugen etwa mit  addMp3File(mp3File);            
 	                }
 	            }
