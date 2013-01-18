@@ -1,11 +1,15 @@
 package view;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class DirectoryNode extends DefaultMutableTreeNode{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	public Path p;
 	

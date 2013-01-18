@@ -1,13 +1,17 @@
 package xmlCache;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 
+import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,10 +26,16 @@ import javax.xml.transform.stream.StreamResult;
 
 import model.MP3File;
 
+import org.apache.commons.codec.binary.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.sun.xml.internal.ws.util.ByteArrayBuffer;
+
+import controler.MP3Parser;
 
 import view.DirectoryNode;
 import view.MP3Node;
@@ -61,7 +71,11 @@ public class XMLCache {
     		TransformerFactory tFactory = TransformerFactory.newInstance();
     		tFactory.setAttribute("indent-number", new Integer(2));
     	    Transformer transformer = tFactory.newTransformer();
-    	    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "cache.dtd"); //doctype-system specifies the system identifier to be used in the document type declaration.
+    	    
+    	    File temp = new File("./Content/cache.dtd");
+    	    temp = temp.getAbsoluteFile();
+    	    String s = temp.getCanonicalPath();
+    	    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, s); //doctype-system specifies the system identifier to be used in the document type declaration.
     	    transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //add additional whitespace when outputting the result tree
     	    //transformer.setOutputProperty("indent-number", "2");
     	    
@@ -85,7 +99,7 @@ public class XMLCache {
 			
    		}                                    	
 	}
-	
+
 	public static void writeToXmlFile (DefaultMutableTreeNode node, Document document, Element element ){
 		
 		//An object that implements the Enumeration interface generates a series of elements, one at a time. 
@@ -93,7 +107,7 @@ public class XMLCache {
 		
 		
     	if (node instanceof MP3Node) {
-    		Element file = ((MP3Node) node).getMp3Information(document);
+    		Element file = getMp3Information(document, (MP3Node) node);
             element.appendChild(file);
 
         } else {
@@ -110,8 +124,82 @@ public class XMLCache {
             }
         }
 	}
-/*	
-	public static boolean readFromXmlFile(DefaultMutableTreeNode root,String file,  File baseDir) {
+
+	private static Element getMp3Information(Document doc, MP3Node node) {
+		Element file = doc.createElement("file");
+		file.setAttribute("name", node.p.toAbsolutePath().toString());
+		file.setAttribute("size", "" + node.p.toFile().length());
+		
+		Element tags = doc.createElement("tags");
+		
+		
+		Element text = doc.createElement("text");
+		text.setAttribute("encoding", "UTF16LE");
+		
+		Element title = doc.createElement("title");
+		title.setAttribute("size" , "" + (node.mp3.getTitle().length() * 2));
+		text.setTextContent(node.mp3.getTitle());
+		title.appendChild(text);
+		
+		
+		text = doc.createElement("text");
+		text.setAttribute("encoding", "UTF16LE");
+
+		Element artist = doc.createElement("artist");
+		artist.setAttribute("size", "" + (node.mp3.getInterpret().length() * 2));
+		artist.setAttribute("frameid", "1");
+		text.setTextContent(node.mp3.getInterpret());
+		artist.appendChild(text);
+		
+		text = doc.createElement("text");
+		text.setAttribute("encoding", "UTF16LE");
+		
+		Element album = doc.createElement("album");
+		album.setAttribute("size", "" + (node.mp3.getAlbum().length() * 2));
+		text.setTextContent(node.mp3.getAlbum());
+		album.appendChild(text);
+		
+		text = doc.createElement("text");
+		text.setAttribute("encoding", "UTF16LE");
+		
+		Element year = doc.createElement("year");
+		year.setAttribute("size", "" + node.mp3.getYear().length());
+		text.setTextContent(node.mp3.getYear());
+		year.appendChild(text);
+		
+		
+		Element cover = doc.createElement("cover");
+		cover.setAttribute("size", node.mp3.getCoverArray().length + "");
+		
+		Element mimetype = doc.createElement("mimetype");
+		mimetype.setTextContent(node.mp3.getMimeType());
+		
+		Element pictype = doc.createElement("pictype");
+		pictype.setTextContent("3");
+		
+		Element description = doc.createElement("description");
+		description.setAttribute("encoding", "UTF16LE");
+		description.setTextContent("dont use!!");
+		
+		Element data = doc.createElement("data");
+		data.setTextContent(Base64.encodeBase64String(node.mp3.getCoverArray()));
+		
+		file.appendChild(tags);
+		tags.appendChild(title);
+		tags.appendChild(artist);
+		tags.appendChild(album);
+		tags.appendChild(year);
+		tags.appendChild(cover);
+		
+		cover.appendChild(mimetype);
+		cover.appendChild(pictype);
+		cover.appendChild(description);
+		cover.appendChild(data);
+		
+		return file;
+	}
+	
+	public static boolean readFromXmlFile(DirectoryNode root,String file,  File baseDir) {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
@@ -122,7 +210,7 @@ public class XMLCache {
 		try {
 			builder = factory.newDocumentBuilder();
 			Document document = builder.parse(new File(file));
-			Element xmlCache = document.getDocumentElement();			
+			Element xmlCache = document.getDocumentElement();
 			long changed = Long.parseLong(xmlCache.getAttribute("timestamp"));
 			readFromXmlFile(root, baseDir, xmlCache.getElementsByTagName("folder").item(0), changed);
 			return true;
@@ -138,15 +226,11 @@ public class XMLCache {
 		}
 	}
 
-	private static void readFromXmlFile(DefaultMutableTreeNode rootNode,File baseDir, Node element, long changed) {
+	private static void readFromXmlFile(DirectoryNode rootNode,File baseDir, Node element, long changed) {
 
-				
-        MP3File mp3File;
-
-        //  Tests whether the file denoted by this abstract pathname is a directory.
+		//  Tests whether the file denoted by this abstract pathname is a directory.
 		if (baseDir.isDirectory()) {
 			File newFile;
-			DefaultMutableTreeNode newNode;
 			
 			//Instances of classes that implement this interface are used to filter filenames.
 		
@@ -169,13 +253,15 @@ public class XMLCache {
 
                 Element element2 = null;
                 for (int j = 0; j < element.getChildNodes().getLength(); j++) {
-                    if (((Element)element.getChildNodes().item(j)).getAttribute("name").equals(newFile.getName())) {
+                	System.out.println(((Element)element.getChildNodes().item(j)).getAttribute("name") + " " + newFile.getAbsolutePath());
+                    if (((Element)element.getChildNodes().item(j)).getAttribute("name").equals(newFile.getAbsolutePath())) {
                         element2 = (Element)element.getChildNodes().item(j);
                     }
                 }
 
                 if (newFile.isDirectory()) { 
-                    newNode = new DefaultMutableTreeNode(newFile.getName(), true);
+                	
+                    DirectoryNode newNode = new DirectoryNode(newFile.toPath());
                    
                     //  go through sub directories
                     if (element2 == null) {
@@ -188,9 +274,15 @@ public class XMLCache {
                     
                 
                     if (element2 == null || newFile.lastModified() > changed) {
-                        rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(newFile),false)); 
+                    	//TODO ich habs geändert karl
+                        //rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(newFile),false));
+                    	MP3Parser p = new MP3Parser(newFile.toPath());
+                    	
+                    	rootNode.add(new MP3Node(p.parseMP3(), newFile.toPath(), newFile.toPath()));
                     } else {
-                        rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(element2, newFile),false));
+                    	//TODO ich habs geändert karl
+                        //rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(element2, newFile),false));
+                    	rootNode.add(setMp3Information(element2, newFile.toPath()));
                     }
     //ToDo mp3File erzeugen etwa mit  addMp3File(mp3File);
 				}
@@ -201,7 +293,48 @@ public class XMLCache {
 			}
 		}
 	}
-	 public static void readFileTree(DefaultMutableTreeNode dirNode, File dir) {
+	
+	private static MP3Node setMp3Information(Element element, Path myPath) {
+		MP3File file = new MP3File();
+		
+		Node temp = element.getElementsByTagName("title").item(0); // the tags
+		file.setTitle(getContent(temp));
+		
+		temp = element.getElementsByTagName("artist").item(0);
+		file.setInterpret(getContent(temp));
+		
+		temp = element.getElementsByTagName("album").item(0);
+		file.setAlbum(getContent(temp));
+		
+		temp = element.getElementsByTagName("year").item(0);
+		file.setYear(getContent(temp));
+		
+		temp = element.getElementsByTagName("cover").item(0);
+		NodeList nl = temp.getChildNodes();
+		for(int i = 0; i < nl.getLength(); i++) {
+			if(nl.item(i).getNodeName().equalsIgnoreCase("mimetype")) {
+				file.setMimeType(nl.item(i).getTextContent());
+			}else if(nl.item(i).getNodeName().equalsIgnoreCase("data")) {
+				file.setCoverArray(Base64.decodeBase64(nl.item(i).getTextContent()));
+				InputStream in = new ByteArrayInputStream(file.getCoverArray());
+				try {
+					file.setCover(ImageIO.read(in));
+				}catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return new MP3Node(file, myPath, myPath);
+	}
+	
+	private static String getContent(Node n) {
+		Node text = n.getFirstChild();
+		return text.getTextContent();
+	}
+	
+	public static void readFileTree(DefaultMutableTreeNode dirNode, File dir) {
 
 	        File file;
 	        DefaultMutableTreeNode newNode;
@@ -228,7 +361,9 @@ public class XMLCache {
 	               
 	                } else {
 	                
-	                    dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(file),false));
+	                	//TODO ich habs geändert karl...
+	                    //dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(file),false));
+	                	dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(),false));
 	 //ToDo mp3File erzeugen etwa mit  addMp3File(mp3File);            
 	                }
 	            }
@@ -238,5 +373,5 @@ public class XMLCache {
 	            }
 	        }
 	    }
-*/
+
 }

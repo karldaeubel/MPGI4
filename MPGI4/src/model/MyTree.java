@@ -24,6 +24,7 @@ public class MyTree extends SimpleFileVisitor<Path>{
 	
 	public MyTree(Path path, boolean re) {
 		root = new DirectoryNode(path);
+		reUse = re;
 	}
 	
 	@Override

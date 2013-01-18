@@ -6,14 +6,14 @@
 <!ELEMENT ignoredfile EMPTY>
 <!ELEMENT file (tags)>
 
-<!ELEMENT tags (title|artist|album|year|cover|ignoredtag)*>
+<!ELEMENT tags (title|artist|album|year|cover)>
 
 <!ELEMENT title (text)>
 <!ELEMENT artist (text)>
 <!ELEMENT album (text)>
 <!ELEMENT year (text)>
 <!ELEMENT cover (mimetype,pictype,description,data)>
-<!ELEMENT ignoredtag (#PCDATA)>
+<!--ELEMENT ignoredtag (#PCDATA)-->
 
 <!ELEMENT text (#PCDATA)>
 <!ELEMENT mimetype (#PCDATA)>
@@ -84,7 +84,7 @@
 	encrypted  (yes | no) "no"
 	groupID    (yes | no) "no"
 >
-<!ATTLIST ignoredtag
+<!--ATTLIST ignoredtag
 	frameid    CDATA #REQUIRED
 	size       CDATA #REQUIRED
 	groupByte  CDATA #IMPLIED
@@ -94,7 +94,7 @@
 	compressed (yes | no) "no"
 	encrypted  (yes | no) "no"
 	groupID    (yes | no) "no"
->
+-->
 
-<!ATTLIST text encoding ("ISO1", "UTF16LE", "UTF16BE") #REQUIRED>
-<!ATTLIST description encoding ("ISO1", "UTF16LE", "UTF16BE") #REQUIRED>
+<!ATTLIST text encoding (ISO1 | UTF16LE | UTF16BE) #REQUIRED>
+<!ATTLIST description encoding (ISO1 | UTF16LE | UTF16BE) #REQUIRED>

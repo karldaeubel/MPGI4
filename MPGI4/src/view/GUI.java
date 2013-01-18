@@ -126,7 +126,7 @@ public class GUI {
 						MP3Parser p = new MP3Parser(changedFiles.get(i).p, changedFiles.get(i).mp3);
 						p.writeMP3();
 					}
-					changedFiles.clear();
+					changedFiles.clear(); //clear the list of all changed mp3files.
 					
 					//write to XML file!
 					if(tree != null) {
@@ -137,20 +137,24 @@ public class GUI {
 					
 					//create new Tree
 					Path p = Paths.get(chooser.getSelectedFile().getPath());
-					File p1 = new File(p.toString() + "mp3cache.xml");
+					File p1 = new File(p.toString() + System.getProperty("file.separator") + "mp3cache.xml");
+
 					MyTree tr;
-					if(p1.exists()) {
-						tr = new MyTree(p, true);
-					}else {
+					if(p1.exists()) {//read from XML?!
+						DirectoryNode d = new DirectoryNode(p);
+						//TODO -> real pathname for dtd file!!!!!!!!!
+						XMLCache.readFromXmlFile(d, p1.toString(), p.toFile());
+						
+						
+					}else {//dont read from XML
 						tr = new MyTree(p, false);
-					}
-					
-					setTree(tr.root);
-					try {
-						Files.walkFileTree(p, tr);
-					}catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						setTree(tr.root);
+						try {
+							Files.walkFileTree(p, tr);
+						}catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
 			}
@@ -195,7 +199,6 @@ public class GUI {
 				
 				if(tree != null) {
 					if(((DirectoryNode)tree.getModel().getRoot()).p != null) {
-						System.out.println(((DirectoryNode) tree.getModel().getRoot()).p.toString());
 						XMLCache.writeToXmlFile((DirectoryNode) (tree.getModel().getRoot()), ((DirectoryNode) tree.getModel().getRoot()).p.toString());
 					}
 				}
