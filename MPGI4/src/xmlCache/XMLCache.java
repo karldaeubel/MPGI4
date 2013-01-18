@@ -274,8 +274,10 @@ public class XMLCache {
                     	//TODO ich habs geändert karl
                         //rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(newFile),false));
                     	MP3Parser p = new MP3Parser(newFile.toPath());
-                    	
-                    	rootNode.add(new MP3Node(p.parseMP3(), newFile.toPath(), newFile.toPath()));
+                    	MP3File temp = p.parseMP3();
+                    	if(temp != null) {
+                    		rootNode.add(new MP3Node(p.parseMP3(), newFile.toPath(), newFile.toPath()));
+                    	}
                     } else {
                     	//TODO ich habs geändert karl
                         //rootNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(element2, newFile),false));
@@ -363,7 +365,9 @@ public class XMLCache {
 	                    //dirNode.add(new DefaultMutableTreeNode(mp3File = new MP3File(file),false));
 	                	MP3Parser p = new MP3Parser(file.toPath());
 	                	mp3File = p.parseMP3();
-	                	dirNode.add(new MP3Node(mp3File, file.toPath(), file.toPath()));
+	                	if(mp3File != null) {
+	                		dirNode.add(new MP3Node(mp3File, file.toPath(), file.toPath()));
+	                	}
 	 //ToDo mp3File erzeugen etwa mit  addMp3File(mp3File);            
 	                }
 	            }
