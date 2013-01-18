@@ -6,7 +6,7 @@
 <!ELEMENT ignoredfile EMPTY>
 <!ELEMENT file (tags)>
 
-<!ELEMENT tags (title|artist|album|year|cover)>
+<!ELEMENT tags (title,artist,album,year,cover)>
 
 <!ELEMENT title (text)>
 <!ELEMENT artist (text)>
