@@ -24,21 +24,23 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import xmlCache.XMLCache;
+import controler.XMLCache;
 
 import controler.MP3Parser;
 
-import exceptions.YearOutOfTimePeriodException;
 
 /**
  * the class to show the User Interface of the Tag-Editor
@@ -81,14 +83,35 @@ public class GUI {
 
 	LinkedList<MP3Node> changedFiles;
 	
+	public static void main(String[] args) {
+		new GUI();
+	}
+	
 	public GUI() {
 
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		frame = new JFrame("MP3-Tag Editor");
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setSize(600, 400);
 
+		setGUI();
 	}
 
 	public void setGUI() {
@@ -156,6 +179,10 @@ public class GUI {
 							e1.printStackTrace();
 						}
 					}
+					
+					if(((DirectoryNode)tree.getModel().getRoot()).p != null) {
+						XMLCache.writeToXmlFile((DirectoryNode) (tree.getModel().getRoot()), ((DirectoryNode) tree.getModel().getRoot()).p.toString());
+					}
 				}
 			}
 		});
@@ -173,6 +200,8 @@ public class GUI {
 					currNode.mp3.setAlbum(albumField.getText());
 					if(isValidYear()) {
 						currNode.mp3.setYear(yearField.getText());
+					}else {
+						JOptionPane.showMessageDialog(frame, "Die Jahreszahl ist nicht korrekt!", "Falsche Eingabe", JOptionPane.INFORMATION_MESSAGE);
 					}
 					if(image == null){                      
 	                    currNode.mp3.setCoverArray(null);

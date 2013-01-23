@@ -1,4 +1,4 @@
-package xmlCache;
+package controler;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -169,20 +169,47 @@ public class XMLCache {
 		
 		
 		Element cover = doc.createElement("cover");
-		cover.setAttribute("size", node.mp3.getCoverArray().length + "");
+		if(node.mp3.getCoverArray() != null) {
+			cover.setAttribute("size", node.mp3.getCoverArray().length + "");
 		
-		Element mimetype = doc.createElement("mimetype");
-		mimetype.setTextContent(node.mp3.getMimeType());
+			Element mimetype = doc.createElement("mimetype");
+			mimetype.setTextContent(node.mp3.getMimeType());
 		
-		Element pictype = doc.createElement("pictype");
-		pictype.setTextContent("3");
+			Element pictype = doc.createElement("pictype");
+			pictype.setTextContent("3");
 		
-		Element description = doc.createElement("description");
-		description.setAttribute("encoding", "UTF16LE");
-		description.setTextContent("dont use!!");
+			Element description = doc.createElement("description");
+			description.setAttribute("encoding", "UTF16LE");
+			description.setTextContent("dont use!!");
 		
-		Element data = doc.createElement("data");
-		data.setTextContent(Base64.encodeBase64String(node.mp3.getCoverArray()));
+			Element data = doc.createElement("data");
+			data.setTextContent(Base64.encodeBase64String(node.mp3.getCoverArray()));
+			
+			cover.appendChild(mimetype);
+			cover.appendChild(pictype);
+			cover.appendChild(description);
+			cover.appendChild(data);
+		}else {
+			cover.setAttribute("size", "0");
+			
+			Element mimetype = doc.createElement("mimetype");
+			mimetype.setTextContent("");
+		
+			Element pictype = doc.createElement("pictype");
+			pictype.setTextContent("-1");
+		
+			Element description = doc.createElement("description");
+			description.setAttribute("encoding", "UTF16LE");
+			description.setTextContent("dont use!!");
+		
+			Element data = doc.createElement("data");
+			data.setTextContent("");
+			
+			cover.appendChild(mimetype);
+			cover.appendChild(pictype);
+			cover.appendChild(description);
+			cover.appendChild(data);
+		}
 		
 		file.appendChild(tags);
 		tags.appendChild(title);
@@ -190,11 +217,6 @@ public class XMLCache {
 		tags.appendChild(album);
 		tags.appendChild(year);
 		tags.appendChild(cover);
-		
-		cover.appendChild(mimetype);
-		cover.appendChild(pictype);
-		cover.appendChild(description);
-		cover.appendChild(data);
 		
 		return file;
 	}

@@ -1,4 +1,4 @@
-package exceptions;
+package model;
 
 public class YearOutOfTimePeriodException extends Exception{
 
