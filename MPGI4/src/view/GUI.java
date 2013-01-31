@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import layout.TableLayout;
@@ -30,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.TreeSelectionEvent;
@@ -43,7 +40,7 @@ import controler.MP3Parser;
 
 
 /**
- * the class to show the User Interface of the Tag-Editor
+ * a class to show the User Interface of the Tag-Editor and to handle all events inside the user interface
  * @author MPGI
  */
 public class GUI {
@@ -83,10 +80,17 @@ public class GUI {
 
 	LinkedList<MP3Node> changedFiles;
 	
+	/**
+	 * the main method to initialize the user interface
+	 * @param args is not handled
+	 */
 	public static void main(String[] args) {
 		new GUI();
 	}
 	
+	/**
+	 * a constructor to initialize the main frame
+	 */
 	public GUI() {
 
 		try {
@@ -114,6 +118,9 @@ public class GUI {
 		setGUI();
 	}
 
+	/**
+	 * the method is called to initialize all UI elements
+	 */
 	public void setGUI() {
 		// Das Layout für das Hauptpanel
 		
@@ -290,6 +297,7 @@ public class GUI {
 		albumField = new JTextField(20);
 		yearField = new JTextField(20);
 
+		//add everything to the main panel
 		mainPanel.add(new JSeparator(JSeparator.VERTICAL), "3,1, 3,12");
 		mainPanel.add(new JSeparator(JSeparator.HORIZONTAL), "4,11, 6,11");
 
@@ -320,6 +328,10 @@ public class GUI {
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * a method to check weather the String inside the 'yearField' is a valid year or not
+	 * @return true if it is a valid year number consisting of 4 numbers, else otherwise
+	 */
 	private boolean isValidYear() {
 		char[] year = yearField.getText().toCharArray();
 		if(year.length != 4) {
@@ -411,7 +423,8 @@ public class GUI {
 	}
 
 	/**
-	 * @param tree the tree to set
+	 * a method to create a tree from a root node and initialize an actionlistener to perform all needed actions. Will redraw the UI afterwards.
+	 * @param root the root node to initialize the tree
 	 */
 	public void setTree(DefaultMutableTreeNode root) {
 		mainPanel.remove(pane);

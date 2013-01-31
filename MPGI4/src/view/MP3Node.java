@@ -1,14 +1,9 @@
 package view;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.apache.commons.codec.binary.Base64;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import model.MP3File;
 
@@ -16,9 +11,7 @@ import model.MP3File;
  * A class to hold the leaf in the tree that is a MP3File
  */
 public class MP3Node extends DefaultMutableTreeNode{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
 	//The MP3 file to store
@@ -26,7 +19,7 @@ public class MP3Node extends DefaultMutableTreeNode{
 	public Path p;
 	/**
 	 * Default constructor
-	 * @param file, 
+	 * @param file the file to set
 	 */
 	public MP3Node(MP3File file) {
 		super();
@@ -34,9 +27,9 @@ public class MP3Node extends DefaultMutableTreeNode{
 	}
 	
 	/**
-	 * Default constructor
-	 * @param file, the MP3file to store in the leaf
-	 * @param obj, the Object to send it to super()
+	 * a constructor to create an MP3 node, witch represents a MP3 file in the filesystem
+	 * @param file the MP3file to store in the leaf
+	 * @param obj the Object to send it to super()
 	 */
 	public MP3Node(MP3File file, Path myPath, Object obj) {
 		super(obj);

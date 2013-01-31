@@ -1,27 +1,36 @@
 package model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 /**
  * a class to hold all necessary informations of an MP3 file
  * @author MPGI
  */
 public class MP3File {
-	//some fields to store all needed informations
+	//some fields to store all needed informations as Strings
 	private String title;
 	private String interpret;
 	private String album;
 	private String year;
-		
+	//informations for the Picture
 	private String mimeType;
 	private BufferedImage cover;
 	private byte[] coverArray;
 	
+	/**
+	 * default construcor for "Unknown" identifier
+	 */
 	public MP3File() {
 		title = interpret = album = year = "Unbekannt";
 	}
 	
+	/**
+	 * a constructor to initialize the MP3File Object
+	 * @param title the title of the song
+	 * @param interpret the interpret of the song
+	 * @param album the album the song is on
+	 * @param year the year the song is published
+	 */
 	public MP3File(String title, String interpret, String album, String year) {
 		this.title = title;
 		this.interpret = interpret;
@@ -29,6 +38,14 @@ public class MP3File {
 		this.year = year;
 	}
 	
+	/**
+	 * a contructor to initialize the MP3File Object with Picture
+	 * @param title the title of the song
+	 * @param interpret the interpret of the song
+	 * @param album the album the song is on
+	 * @param year the year the song is published
+	 * @param image the Buffered Image to store the picture
+	 */
 	public MP3File(String title, String interpret, String album, String year, BufferedImage image) {
 		this.title = title;
 		this.interpret = interpret;
@@ -37,6 +54,7 @@ public class MP3File {
 		this.cover = image;
 	}
 
+	//getters and setters
 	/**
 	 * @return the title
 	 */
@@ -135,6 +153,9 @@ public class MP3File {
 		this.mimeType = mimeType;
 	}
 
+	/**
+	 * the toString method whitch is caled when the Object have to be presented as a String
+	 */
 	public String toString() {
 		return "Titel: " + title+ " Interpret: " + interpret + " Album: " + album + " Jahr: " + year + " Cover: " + (cover == null? false : true);
 	}

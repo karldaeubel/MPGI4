@@ -13,20 +13,30 @@ import javax.swing.JLabel;
  * @author MPGI
  */
 public class ImageLabel extends JLabel {
+
+	private static final long serialVersionUID = 1L;
 	//the picture to show on the label
 	private ImageIcon imageIcon;
 
+	/**
+	 * the default constructor to ctreate a new ImageLabel Object.
+	 */
 	public ImageLabel() {
 		super();
 		imageIcon = new ImageIcon();
 	}
 
+	/**
+	 * a method to set an icon to this ImageLabel
+	 * @param icon the icon to set
+	 */
 	public void setIcon(ImageIcon icon) {
 		super.setIcon(icon);
 		imageIcon = icon;
 		super.setIcon(null);
 	}
 
+	//redraw the ImageLabel to fit the picture into the boundary of the Label
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;

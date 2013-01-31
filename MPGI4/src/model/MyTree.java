@@ -7,24 +7,31 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
 
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import controler.MP3Parser;
 
 import view.DirectoryNode;
-import view.GUI;
 import view.MP3Node;
 
+/**
+ * a class to traverse a file dircetory recursively
+ * @author MPGI 4
+ *
+ */
 public class MyTree extends SimpleFileVisitor<Path>{
-	
+	/**
+	 * the rootnode of the directory tree;
+	 */
 	public DirectoryNode root;
-	
-	private boolean reUse;
-	
+		
+	/**
+	 * a constructor to initialize a tree
+	 * @param path
+	 * @param re
+	 */
 	public MyTree(Path path, boolean re) {
 		root = new DirectoryNode(path);
-		reUse = re;
 	}
 	
 	@Override

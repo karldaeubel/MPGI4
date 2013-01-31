@@ -1,53 +1,56 @@
 package controler;
 
-
-
-import org.apache.commons.codec.binary.Base64;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
 import model.MP3File;
 
+/**
+ * A class to read and write from and into a MP3 file in the MP3v2 format
+ * @author karl
+ *
+ */
 public class MP3Parser {
     
+	//the header of the MP3 file
 	public byte header[];
 	public Path file;
-	
+	//all frames in one linked list
 	LinkedList<byte[]> frames;
 	
 	RandomAccessFile f;
 	
 	MP3File mp3f;
 	
+	/**
+	 * a constructor to create an instance of the MP3parser Obejct
+	 * @param p the Path to the file to write to
+	 * @param MP3file the MP3 file to read from
+	 */
 	public MP3Parser(Path p, MP3File MP3file) {
 		file = p;
 		mp3f = MP3file;
 	}
 	
+	/**
+	 * a constructor to create an instance of the MP3Parser Object
+	 * @param f the path of the mp3 file to read from
+	 */
 	public MP3Parser(Path f) {
 		this.file = f;
 	}
 	
 	/**
-	 * 
+	 * a method to write all informations contained in the 'mp3f' into the path 'p'
 	 */
 	public void writeMP3() {
 		try {
@@ -296,6 +299,12 @@ public class MP3Parser {
 		}
 	}
 
+	/**
+	 * a method to create a byte array witch represents a completely 'TEXT' frame defined in the mp3v2 specification with ASCII or UNICODE (LE or BE)
+	 * @param info the information to write into the frame
+	 * @param copy the original byte array that should be changed
+	 * @return a new byte array containing all nessesary informations
+	 */
 	private byte[] createNewFrame(String info, byte[] copy) {
 		int bom = 0;
 		String charset = "";
@@ -341,8 +350,8 @@ public class MP3Parser {
 	}
 	
 	/**
-	 * 
-	 * @return the MP3FIle to read from
+	 * a method to read all informations contained in the MP3 file and write it to the 'mp3f'
+	 * @return the MP3File containing all needed informations
 	 */
 	public MP3File parseMP3() {
 		mp3f = null;
@@ -497,6 +506,11 @@ public class MP3Parser {
 		return mp3f;
 	}
 	
+	/**
+	 * a method to get the information from a 'TEXT' frame with the special encoding
+	 * @param copy the frame containing the information
+	 * @return the information stored in the frame
+	 */
 	private String getVal(byte copy[]) {
 		String retval = "";
 		if(copy[10] == 0) {
@@ -529,6 +543,10 @@ public class MP3Parser {
 		return retval;
 	}
 	
+	/**
+	 * a method to get one frames at a given offset in the file
+	 * @param off the offset to start reading at
+	 */
 	private void getFrames(int off) {
 		byte[] save = null;
 		
@@ -546,131 +564,4 @@ public class MP3Parser {
 			e.printStackTrace();
 		}
 	}
-	
-	public Element getDataForXML(Document document) {
-		
-		Element file = document.createElement("file");
-        Element tags = document.createElement("tags");
-        file.appendChild(tags);
-
-        for(int i = 0; i < frames.size(); i++) {
-            Element tag;
-            String val = "" + (char)frames.get(i)[0] + (char)frames.get(i)[1] + (char)frames.get(i)[2] + (char)frames.get(i)[3]; //von oben �bernommen
-			if(val.equalsIgnoreCase("APIC")) {//Frontcover
-						
-				// cover (mimetype,pictype,description,data)
-                tag = document.createElement("cover");         
-                Element mimeType = document.createElement("mimetype");
-        //ToDo  mimeType.setTextContent(new String(?));  'APIC-1'--> Name des entsprechenden Tags, aber	wo kriege ich das her?
-
-                Element picType  = document.createElement("pictype"); 
-                byte[] picTypeContent = new byte[1];
-        //ToDo  picTypeContent[0] = ?;  'APIC-2' 	
-                picType.setTextContent(Base64.encodeBase64String(picTypeContent));
-
-                Element description = document.createElement("description");
-        //ToDo  description.setTextContent(); //'APIC-3' 	
-                
-                Element data = document.createElement("data");
-        //ToDo  data.setTextContent(Base64.encodeBase64String(getImageData ???));
-                
-             // Adds the node newChild to the end of the list of children of this node
-                tag.appendChild(mimeType);
-                tag.appendChild(picType);
-                tag.appendChild(description);
-                tag.appendChild(data);
-                
-                
-         	}else if(val.equalsIgnoreCase("TIT2")) {
-         	    tag = document.createElement("title");	
-         	}else if(val.equalsIgnoreCase("TPE1")) {
-         	    tag = document.createElement("artist");		
-         	}else if(val.equalsIgnoreCase("TALB")) {
-         	    tag = document.createElement("album");		
-         	}else if(val.equalsIgnoreCase("TYER")) {
-         	    tag = document.createElement("year");	
-         	} else {
-                tag = document.createElement("ignoredtag");
-                byte[] data = header;
-                tag.setTextContent(Base64.encodeBase64String(data));
-                tag.setAttribute("frames", new String(data));
-
-           
-                
-             }
-            if (!tag.getTagName().equals("ignoredtag")) {
-                 Element text = document.createElement("text");
-         //ToDo  text.setTextContent(?); --> ich wei� noch nich, was darein kommt
-                 tag.appendChild(text);
-            }
-            tags.appendChild(tag);
-        }
-
-        return file;
-		
-		
-	}
-	
-	// create data from xml file
-	public MP3Parser(Element xmlElement, File file) {
-
-  //      try {
-            NodeList tags = xmlElement.getElementsByTagName("tags").item(0).getChildNodes();
-            for (int i = 0; i < tags.getLength(); i++) {
-                Element tag = (Element) tags.item(i);
-
-//                <!ELEMENT title (text)>
-//                <!ELEMENT artist (text)>
-//                <!ELEMENT album (text)>
-//                <!ELEMENT year (text)>
-//                <!ELEMENT cover (mimetype,pictype,description,data)>
-//                <!ELEMENT ignoredtag (#PCDATA)>
-
-                
-        /*ToDo wie kann diese Daten in den Header schreiben?
-                String name = "";
-                if (tag.getTagName().equals("title")) {
-                    Header = new Header(name = "TIT2");
-                } else if (tag.getTagName().equals("artist")) {
-                    Header = new Header(name = "TPE1");
-                } else if (tag.getTagName().equals("album")) {
-                    Header = new Header(name = "TALB");
-                } else if (tag.getTagName().equals("year")) {
-                    Header = new Header(name = "TYER");
-                } else if (tag.getTagName().equals("cover")) {
-                    Header = new Header("APIC");
-                } else if (tag.getTagName().equals("ignoredtag")) {
-                    Header = new Header(tag.getAttribute("frameid"));
-                } else {
-                    continue;
-                }
-        */
-              
-        /* ToDo hier will ich den header zu dem frame array hinzuf�gen
-                if (tag.getTagName().equals("ignoredtag")) {
-                    frames = new Frame(Base64.decodeBase64(tag.getTextContent()), 0, frameHeader);
-                } else if (tag.getTagName().equals("cover")) {
-                    frames = new FramePicture(Base64.decodeBase64(tag.getElementsByTagName("data").item(0).getTextContent()),
-                     tag.getElementsByTagName("description").item(0).getTextContent(),FramePicture.PictureType.fromByte(
-                       Base64.decodeBase64(tag.getElementsByTagName("pictype").item(0).getTextContent())[0]),
-                        tag.getElementsByTagName("mimetype").item(0).getTextContent(),Header);
-               
-         
-        
-                } else {
-                    frames = tag.getElementsByTagName("text").item(0).getTextContent(),frameHeader);
-                }
-                this.frames.add(frame);
-            }
-
-        } catch (Exception e) {
-            System.out.println("Invalid XML data for file ");
-            System.out.println(e.getMessage());
-            this.parseFile(file);           --> wie kann ich diese file parsen?
-        }
-    */
-    
-    }   
-     
-  }
 }

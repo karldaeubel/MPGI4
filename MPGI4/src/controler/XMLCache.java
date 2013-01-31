@@ -8,7 +8,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
@@ -33,20 +32,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
-
 import controler.MP3Parser;
 
 import view.DirectoryNode;
 import view.MP3Node;
 
-
-
+/**
+ * A class to read and write from and into XML files
+ * @author MPGI
+ *
+ */
 public class XMLCache {
 
-	
-	
-	
+	/**
+	 * a method to write a filesystem into a xml file
+	 * @param root the rootnode of the filesystem
+	 * @param file the path the xml should be created
+	 */
     public static void writeToXmlFile (DefaultMutableTreeNode root, String file ){
 		
     	file += System.getProperty("file.separator") + "mp3cache.xml";
@@ -100,6 +102,12 @@ public class XMLCache {
    		}                                    	
 	}
 
+    /**
+     * a recursive method to traverse through the filesystem creating an element of the xml file
+     * @param node the current root node
+     * @param document the document
+     * @param element the element
+     */
 	public static void writeToXmlFile (DefaultMutableTreeNode node, Document document, Element element ){
 		
 		//An object that implements the Enumeration interface generates a series of elements, one at a time. 
@@ -125,6 +133,12 @@ public class XMLCache {
         }
 	}
 
+	/**
+	 * a method to get all informations from a MP3File Object and return an element containing all these informations
+	 * @param doc the document
+	 * @param node the MP3Node containing all the needed informations
+	 * @return an element with all necessary informations
+	 */
 	private static Element getMp3Information(Document doc, MP3Node node) {
 		Element file = doc.createElement("file");
 		file.setAttribute("name", node.p.toAbsolutePath().toString());
@@ -221,6 +235,13 @@ public class XMLCache {
 		return file;
 	}
 	
+	/**
+	 * a method to read from a xml file
+	 * @param root the root node
+	 * @param file the file
+	 * @param baseDir the baseDir
+	 * @return whether the process was successful or not
+	 */
 	public static boolean readFromXmlFile(DirectoryNode root,String file,  File baseDir) {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -248,6 +269,13 @@ public class XMLCache {
 		}
 	}
 
+	/**
+	 * a recursive method to read all mp3 files from the given xml file
+	 * @param rootNode the rootNode
+	 * @param baseDir the base directory
+	 * @param element the element to read from
+	 * @param changed the time to compare it to the filesystem changed time and re-read it eventually
+	 */
 	private static void readFromXmlFile(DirectoryNode rootNode,File baseDir, Node element, long changed) {
 
 		//  Tests whether the file denoted by this abstract pathname is a directory.
@@ -316,6 +344,12 @@ public class XMLCache {
 		}
 	}
 	
+	/**
+	 * a method to set all informations from an xml file into an MP3File Object 
+	 * @param element the element to read from
+	 * @param myPath the path the MP3File is located in the filesystem
+	 * @return the created MP3File Object containing all needed informations
+	 */
 	private static MP3Node setMp3Information(Element element, Path myPath) {
 		MP3File file = new MP3File();
 		
@@ -351,11 +385,21 @@ public class XMLCache {
 		return new MP3Node(file, myPath, myPath);
 	}
 	
+	/**
+	 * a method to get the textual contend of a node
+	 * @param n the node the contend is stored
+	 * @return the information
+	 */
 	private static String getContent(Node n) {
 		Node text = n.getFirstChild();
 		return text.getTextContent();
 	}
 	
+	/**
+	 * a method to read a new directory, not contained in the xml file, to be up to date
+	 * @param dirNode the directory node to start at
+	 * @param dir the directory
+	 */
 	public static void readFileTree(DefaultMutableTreeNode dirNode, File dir) {
 
 	        File file;
