@@ -23,7 +23,7 @@ public class DirectoryNode extends DefaultMutableTreeNode{
 	 * @param path the path of the directory in the file system
 	 */
 	public DirectoryNode(Path path) {
-		super();
+		super(path.toString());
 		p = path;
 	}
 

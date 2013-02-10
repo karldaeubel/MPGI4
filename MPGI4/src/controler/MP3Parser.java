@@ -16,7 +16,7 @@ import model.MP3File;
 
 /**
  * A class to read and write from and into a MP3 file in the MP3v2 format
- * @author karl
+ * @author MPGI 4
  *
  */
 public class MP3Parser {

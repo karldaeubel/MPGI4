@@ -45,40 +45,40 @@ import controler.MP3Parser;
  */
 public class GUI {
 	
-	File choosenFile = null;
-    BufferedImage image=null;
-    byte[] imageArray;
-    String mimeType;
+	private File choosenFile = null;
+    private BufferedImage image=null;
+    private byte[] imageArray;
+    private String mimeType;
     
     //the main frame
-	JFrame frame;
+	private JFrame frame;
 	
 	//some Components to show at the frame
-	JPanel mainPanel;
+	private JPanel mainPanel;
 
-	JLabel titleLabel;
-	JLabel albumLabel;
-	JLabel interpretLabel;
-	JLabel yearLabel;
-	JLabel coverLabel;
+	private JLabel titleLabel;
+	private JLabel albumLabel;
+	private JLabel interpretLabel;
+	private JLabel yearLabel;
+	private JLabel coverLabel;
 
-	ImageLabel imageLabel;
+	private ImageLabel imageLabel;
 
-	JTextField titleField;
-	JTextField interpretField;
-	JTextField albumField;
-	JTextField yearField;
+	private JTextField titleField;
+	private JTextField interpretField;
+	private JTextField albumField;
+	private JTextField yearField;
 
-	JButton newFolder;
-	JButton save;
-	JButton close;
+	private JButton newFolder;
+	private JButton save;
+	private JButton close;
 	
-	JScrollPane pane;
-	JTree tree;
+	private JScrollPane pane;
+	private JTree tree;
 	
-	MP3Node currNode;
+	private MP3Node currNode;
 
-	LinkedList<MP3Node> changedFiles;
+	private LinkedList<MP3Node> changedFiles;
 	
 	/**
 	 * the main method to initialize the user interface
@@ -232,6 +232,7 @@ public class GUI {
 					MP3Parser p = new MP3Parser(changedFiles.get(i).p, changedFiles.get(i).mp3);
 					p.writeMP3();
 				}
+				changedFiles.clear();
 				
 				if(tree != null) {
 					if(((DirectoryNode)tree.getModel().getRoot()).p != null) {
@@ -239,7 +240,10 @@ public class GUI {
 					}
 				}
 				
-				frame.dispose();
+				if(frame != null) {
+					frame.dispose();
+					frame = null;
+				}
 			}
 		});
 		
@@ -329,10 +333,24 @@ public class GUI {
 	}
 	
 	/**
+	 * @return the changedFiles
+	 */
+	public LinkedList<MP3Node> getChangedFiles() {
+		return changedFiles;
+	}
+
+	/**
+	 * @param changedFiles the changedFiles to set
+	 */
+	public void setChangedFiles(LinkedList<MP3Node> changedFiles) {
+		this.changedFiles = changedFiles;
+	}
+
+	/**
 	 * a method to check weather the String inside the 'yearField' is a valid year or not
 	 * @return true if it is a valid year number consisting of 4 numbers, else otherwise
 	 */
-	private boolean isValidYear() {
+	public boolean isValidYear() {
 		char[] year = yearField.getText().toCharArray();
 		if(year.length != 4) {
 			return false;
@@ -456,6 +474,48 @@ public class GUI {
 		pane = new JScrollPane(tree);
 		mainPanel.add(pane, "1,1, 1,10");
 		mainPanel.validate();
+	}
+
+	/**
+	 * @return the frame
+	 */
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	/**
+	 * @return the newFolder
+	 */
+	public JButton getNewFolder() {
+		return newFolder;
+	}
+
+	/**
+	 * @return the save
+	 */
+	public JButton getSave() {
+		return save;
+	}
+
+	/**
+	 * @return the close
+	 */
+	public JButton getClose() {
+		return close;
+	}
+
+	/**
+	 * @return the currNode
+	 */
+	public MP3Node getCurrNode() {
+		return currNode;
+	}
+
+	/**
+	 * @param currNode the currNode to set
+	 */
+	public void setCurrNode(MP3Node currNode) {
+		this.currNode = currNode;
 	}
 
 }
