@@ -369,15 +369,24 @@ public class XMLCache {
 		NodeList nl = temp.getChildNodes();
 		for(int i = 0; i < nl.getLength(); i++) {
 			if(nl.item(i).getNodeName().equalsIgnoreCase("mimetype")) {
-				file.setMimeType(nl.item(i).getTextContent());
+				if(nl.item(i).getTextContent().equals("")) {
+					file.setMimeType(null);
+				}else {
+					file.setMimeType(nl.item(i).getTextContent());
+				}
 			}else if(nl.item(i).getNodeName().equalsIgnoreCase("data")) {
-				file.setCoverArray(Base64.decodeBase64(nl.item(i).getTextContent()));
-				InputStream in = new ByteArrayInputStream(file.getCoverArray());
-				try {
-					file.setCover(ImageIO.read(in));
-				}catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(nl.item(i).getTextContent().equals("")) {
+					file.setCoverArray(null);
+					file.setCover(null);
+				}else {
+					file.setCoverArray(Base64.decodeBase64(nl.item(i).getTextContent()));
+					InputStream in = new ByteArrayInputStream(file.getCoverArray());
+					try {
+						file.setCover(ImageIO.read(in));
+					}catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}

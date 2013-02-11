@@ -12,8 +12,6 @@ import model.MP3File;
 
 import org.junit.Test;
 
-import resources.TestImages;
-
 import view.GUI;
 import view.MP3Node;
 
@@ -154,10 +152,5 @@ public class TestGUI {
 		assertTrue(g.getAlbumField().getText().equals("Unbekannt"));
 		assertTrue(g.getYearField().getText().equals("Unbekannt"));
 		
-	}
-	
-	@Test
-	public void testPicture() {
-		// TODO weiteres????!?!?!?!??!?!? TestImages.
 	}
 }
